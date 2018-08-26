@@ -8,37 +8,62 @@ import GameClient.GlobalController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Observable;
 import java.util.Observer;
 
 public class ThreeInRowPanel extends JPanel implements Observer {
 
     private GlobalController controller;
+    private LoggedClientsPanel clientsPanel;
 
-    public ThreeInRowPanel(GlobalController controller){
+    public ThreeInRowPanel(GlobalController controller) {
         this.controller = controller;
         this.controller.addObserver(this);
-        setBackground(Color.BLACK);
 
+        createComponents();
         setUpLayout();
         setVisible(controller.getLogin() != null);
 
         validate();
     }
 
-    private void setUpLayout(){
+    private void createComponents() {
+        try {
+            clientsPanel = new LoggedClientsPanel();
+            UnicastRemoteObject.exportObject(clientsPanel, 0);
+        } catch (RemoteException e) {
+            System.err.println("Erro ao criar interface de callback no cliente:\n" + e);
+            System.exit(-1);
+        }
+    }
+
+    private void setUpLayout() {
         this.setSize(700, 500);
         this.setMinimumSize(new Dimension(650, 450));
-        JLabel label = new JLabel("Welcome to Hell");
-        label.setFont(label.getFont().deriveFont(40.0f).deriveFont(Font.BOLD));
-        label.setForeground(Color.WHITE);
 
         setLayout(new BorderLayout());
-        add(label, BorderLayout.CENTER);
+        add(clientsPanel, BorderLayout.CENTER);
+
     }
 
     @Override
     public void update(Observable o, Object arg) {
         setVisible(controller.getLogin() != null);
+    }
+
+    public void registerClientCallback() {
+        controller.registerClientCallback(clientsPanel);
+        clientsPanel.setPlayerList(controller.getLoggedPlayers());
+    }
+
+    public void unbindClientCallback() {
+        try {
+            UnicastRemoteObject.unexportObject(clientsPanel, true);
+        } catch (NoSuchObjectException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -4,10 +4,13 @@
 
 package DatabaseCommunication;
 
+import DatabaseCommunication.models.Pair;
 import DatabaseCommunication.models.Player;
 import DatabaseCommunication.exceptions.*;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseCommunication {
 
@@ -244,6 +247,61 @@ public class DatabaseCommunication {
                 + " WHERE " + Constants.LOGGED + " != '0';";
 
         execute(sql);
+    }
+
+    public List<Player> getLoggedPlayers() {
+        String query = "SELECT * FROM " + Constants.PLAYERS_TABLE + " WHERE " + Constants.LOGGED + " = '1';";
+        ResultSet result = executeQuery(query);
+        return parsePlayerList(result);
+    }
+
+    private List<Player> parsePlayerList(ResultSet result) {
+        List<Player> playerList = new ArrayList<>();
+
+        if (result != null) {
+            try {
+                while (result.next()) {
+                    String ip = result.getString(Constants.IP_ADDRESS);
+                    if (result.wasNull())
+                        ip = "";
+                    playerList.add(new Player(result.getString(Constants.USERNAME), result.getString(Constants.NAME),
+                            result.getString(Constants.PASSWORD), ip,
+                            result.getInt(Constants.ID), true));
+                }
+            } catch (SQLException e) {
+                System.err.println("Error parsing player list: " + e);
+            }
+        }
+
+        return playerList;
+    }
+
+    //----------------------- PAIRS TABLE ---------------------
+    public boolean checkIfPlayerHasPair(Player player) {
+        String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE " +
+                Constants.PLAYER1_ID + " = '" + player.getId() + "' OR " +
+                Constants.PLAYER2_ID + " = '" + player.getId() + "';";
+        ResultSet result = executeQuery(query);
+
+        return parsePairList(result).size() > 0;
+    }
+
+    private List<Pair> parsePairList(ResultSet result) {
+        List<Pair> pairList = new ArrayList<>();
+
+        if (result != null) {
+            try {
+                while (result.next()) {
+                    pairList.add(new Pair(result.getInt(Constants.PLAYER1_ID),
+                            result.getInt(Constants.PLAYER2_ID),
+                            result.getInt(Constants.FORMED) == 1));
+                }
+            } catch (SQLException e) {
+                System.err.println("Error parsing player list: " + e);
+            }
+        }
+
+        return pairList;
     }
 
 

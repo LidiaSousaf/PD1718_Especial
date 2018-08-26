@@ -4,10 +4,13 @@
 
 package GameClient.gui;
 
+import CommunicationCommons.PlayerLogin;
 import GameClient.GlobalController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,7 +32,18 @@ public class ClientWindow extends JFrame implements Observer {
         setVisible(true);
         this.setSize(700, 500);
         this.setMinimumSize(new Dimension(650, 450));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+//                super.windowClosing(e);
+                globalController.shutdownClient();
+                threeInRowPanel.unbindClientCallback();
+                dispose();
+                System.exit(0);
+            }
+        });
 
         validate();
     }
@@ -44,7 +58,7 @@ public class ClientWindow extends JFrame implements Observer {
         Container container = getContentPane();
 
         container.setLayout(new BorderLayout());
-        container.add(threeInRowPanel, BorderLayout.CENTER);
+//        container.add(threeInRowPanel, BorderLayout.CENTER);
         container.add(startupPanel, BorderLayout.CENTER);
 
     }
@@ -52,6 +66,19 @@ public class ClientWindow extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        repaint();
+        if (arg instanceof PlayerLogin) {
+            if (globalController.getLogin() != null) {
+                remove(startupPanel);
+                add(threeInRowPanel, BorderLayout.CENTER);
+                threeInRowPanel.registerClientCallback();
+            } else {
+                remove(threeInRowPanel);
+                add(startupPanel, BorderLayout.CENTER);
+            }
+
+            repaint();
+            revalidate();
+        }
+
     }
 }

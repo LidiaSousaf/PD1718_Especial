@@ -1,21 +1,25 @@
+/**
+ * Created by Lídia on 26/08/2018
+ */
+
 package CommunicationCommons;
 
 import java.io.Serializable;
 
-public class PlayerRegister implements Serializable {
+public class LoggedPlayerInfo implements Serializable {
     //------------------------ CONSTANTS ----------------------
-    public static final Long serialVersionUID = 1L;
+    public static final Long serialVersionUID = 3L;
 
     //------------------------ VARIABLES ----------------------
     private String userName;
     private String name;
-    private String password;
+    private boolean hasPair;
 
     //---------------------- CONSTRUCTORS ---------------------
-    public PlayerRegister(String userName, String name, String password) {
+    public LoggedPlayerInfo(String userName, String name, boolean hasPair) {
         this.userName = userName;
         this.name = name;
-        this.password = password;
+        this.hasPair = hasPair;
     }
 
     //------------------- GETTERS / SETTERS -------------------
@@ -35,18 +39,11 @@ public class PlayerRegister implements Serializable {
         this.name = name;
     }
 
-    public String getPassword() {
-        return password;
+    public boolean isHasPair() {
+        return hasPair;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    //--------------------- OTHER METHODS ---------------------
-    public boolean isValid(){
-        return (userName != null && !userName.isEmpty() && userName.length() <= 16)
-                && (name != null && !name.isEmpty() && name.length() <= 32)
-                && (password != null && !password.isEmpty() && password.length() <= 16);
+    public void setHasPair(boolean hasPair) {
+        this.hasPair = hasPair;
     }
 }
