@@ -21,16 +21,15 @@ public class CallbackUpdatesPanel extends JPanel {
     private LoggedClientsPanel loggedClientsPanel;
     private RemoteGameClient callback;
 
-    public CallbackUpdatesPanel(GlobalController controller){
+    public CallbackUpdatesPanel(GlobalController controller) {
         this.controller = controller;
 
         createComponents();
         setUpLayout();
     }
 
-    private void createComponents(){
+    private void createComponents() {
         this.loggedClientsPanel = new LoggedClientsPanel(controller);
-//        this.loggedClientsPanel.setPlayerList(controller.getLoggedPlayers());
         try {
             this.callback = new RemoteGameClient();
         } catch (RemoteException e) {
@@ -40,8 +39,7 @@ public class CallbackUpdatesPanel extends JPanel {
         }
     }
 
-    private void setUpLayout(){
-        setBackground(Color.GRAY);
+    private void setUpLayout() {
         this.setSize(300, 600);
         this.setMinimumSize(new Dimension(250, 500));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -52,11 +50,11 @@ public class CallbackUpdatesPanel extends JPanel {
         validate();
     }
 
-    public void registerClientCallback(){
+    public void registerClientCallback() {
         controller.registerClientCallback(callback);
     }
 
-    public void unbindClientCallback(){
+    public void unbindClientCallback() {
         try {
             UnicastRemoteObject.unexportObject(callback, true);
         } catch (NoSuchObjectException e) {
@@ -64,17 +62,14 @@ public class CallbackUpdatesPanel extends JPanel {
         }
     }
 
-    public void updateLoggedClientsPanel(List<LoggedPlayerInfo> playerList){
-        remove(loggedClientsPanel);
-        loggedClientsPanel = new LoggedClientsPanel(controller);
-        add(loggedClientsPanel);
-        revalidate();
+    public void updateLoggedClientsPanel(List<LoggedPlayerInfo> playerList) {
+        loggedClientsPanel.updateLoggedPlayers(playerList);
     }
 
 
     //--------------------------- INNER CLASS FOR -------------------------
     //-------------------- REMOTE CALLBACK IMPLEMENTATION -----------------
-    class RemoteGameClient extends UnicastRemoteObject implements RemoteClientInterface{
+    class RemoteGameClient extends UnicastRemoteObject implements RemoteClientInterface {
         public RemoteGameClient() throws RemoteException {
 
         }

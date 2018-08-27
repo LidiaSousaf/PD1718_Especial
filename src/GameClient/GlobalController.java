@@ -146,6 +146,10 @@ public class GlobalController extends Observable {
         return playerList;
     }
 
+    public void requestPair(String userName){
+        System.out.println("Pedido par ao jogador " + userName);
+    }
+
     //-------------------------- OTHER METHODS ----------------------------
     public void shutdownClient(int exitStatus) {
         if (login != null) {

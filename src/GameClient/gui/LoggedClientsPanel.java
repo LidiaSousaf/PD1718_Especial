@@ -6,23 +6,24 @@ package GameClient.gui;
 
 import CommunicationCommons.LoggedPlayerInfo;
 import GameClient.GlobalController;
-import GameClient.gui.tablemodels.PlayersTableModel;
 
 import javax.swing.*;
-import javax.swing.table.TableCellEditor;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class LoggedClientsPanel extends JPanel {
 
+    private static final String[] COLUMN_TITLES = {"Username", "Nome", "Pedir par"};
     private GlobalController controller;
     private List<LoggedPlayerInfo> playerList;
     private JTable table;
     private JLabel panelTitle;
     private JScrollPane scroll;
+    private PlayersTableModel tableModel;
 
     public LoggedClientsPanel(GlobalController controller) {
         this.controller = controller;
@@ -32,8 +33,8 @@ public class LoggedClientsPanel extends JPanel {
     }
 
     private void createComponents() {
-        PlayersTableModel model = new PlayersTableModel(playerList, controller);
-        table = new JTable(model) {
+        tableModel = new PlayersTableModel(null, COLUMN_TITLES);
+        table = new JTable(tableModel) {
             //Table will only show 5 players in its viewport
             public Dimension getPreferredScrollableViewportSize() {
                 return new Dimension(300, getRowHeight() * 5);
@@ -41,16 +42,18 @@ public class LoggedClientsPanel extends JPanel {
         };
         setColumnDimensions();
 
+        table.addMouseListener(new TableButtonListener());
+
         scroll = new JScrollPane(table);
 
         table.setPreferredScrollableViewportSize(table.getPreferredSize());
 
-        panelTitle = new JLabel("Jogadores logados");
+        panelTitle = new JLabel("Jogadores Online");
         panelTitle.setFont(panelTitle.getFont().deriveFont(14.0f));
 
     }
 
-    private void setUpLayout(){
+    private void setUpLayout() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(Box.createVerticalStrut(10));
@@ -65,161 +68,78 @@ public class LoggedClientsPanel extends JPanel {
     }
 
     private void setColumnDimensions() {
-        table.getColumnModel().getColumn(0).setPreferredWidth(100);
-        table.getColumnModel().getColumn(1).setPreferredWidth(100);
-        table.getColumnModel().getColumn(2).setPreferredWidth(100);
-        table.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-        table.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor());
-
+        table.getColumn(COLUMN_TITLES[0]).setPreferredWidth(100);
+        table.getColumn(COLUMN_TITLES[1]).setPreferredWidth(100);
+        table.getColumn(COLUMN_TITLES[2]).setPreferredWidth(100);
+        table.getColumn(COLUMN_TITLES[2]).setCellRenderer(new ButtonRenderer());
     }
-//
-//    private void printPlayers() {
-//        removeAll();
-//        for (int i = 0; i < playerList.size(); i++) {
-//            JLabel label = new JLabel(playerList.get(i).getUserName());
-//            add(label);
-//        }
-//
-//        validate();
-//    }
 
-//    public void setPlayerList(List<LoggedPlayerInfo> playerList) {
-//        this.playerList = playerList;
-//        PlayersTableModel model = (PlayersTableModel) table.getModel();
-////        model.setPlayersList(playerList);
-//        table.revalidate();
-////        printPlayers();
-//    }
 
-//    public void updateLoggedPlayers(List<LoggedPlayerInfo> playerList) {
-//        setPlayerList(playerList);
+    public void updateLoggedPlayers(List<LoggedPlayerInfo> playerList) {
+        this.playerList = playerList;
+        tableModel.setRowCount(0);
 //        System.out.println("updateLoggedPlayers");
-//        for(int i =0 ; i<playerList.size();i++){
-//            System.out.println(playerList.get(i).getUserName());
-//        }
-//    }
+        for (LoggedPlayerInfo playerInfo : playerList) {
+//            System.out.println(playerInfo.getUserName());
+            boolean isSamePlayer = playerInfo.getUserName().equals(controller.getLogin().getUserName());
+            String buttonText = isSamePlayer ? " - " : "Pedir par";
+            JButton button = new JButton(buttonText);
+            button.setEnabled(!playerInfo.getHasPair() && !isSamePlayer && !controller.getHasRequestedPair());
 
-    class ButtonRenderer extends JButton implements TableCellRenderer {
-
-        public ButtonRenderer() {
-            setOpaque(true);
+            tableModel.addRow(new Object[]{playerInfo.getUserName(), playerInfo.getName(), button});
         }
+    }
+
+    //--------------------- INNER TABLE MODEL CLASS -----------------------
+    private class PlayersTableModel extends DefaultTableModel {
+        public PlayersTableModel(Object[][] values, String[] titles) {
+            super(values, titles);
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    }
+
+    //-------------------- INNER CELL RENDERER CLASS ----------------------
+    private class ButtonRenderer implements TableCellRenderer {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-//            if (isSelected) {
-//                setForeground(table.getSelectionForeground());
-//                setBackground(table.getSelectionBackground());
-//            } else {
-//                setForeground(UIManager.getColor("Button.disabledText"));
-//                setBackground(UIManager.getColor("Button.disabledBackground"));
-//            }
-            boolean isSamePlayer = playerList.get(row).getUserName().equals(controller.getLogin().getUserName());
-            boolean hasPair;
-            if (value != null) {
-                hasPair = (boolean) value;
-                if (isSamePlayer) {
-                    setText("-");
-                } else {
-                    setText(hasPair ? "Tem par" : "Pedir par");
-                }
-                if (hasPair || isSamePlayer) {
-                    setEnabled(false);
-                    setForeground(UIManager.getColor("Button.disabledText"));
-                    setBackground(UIManager.getColor("Button.disabledBackground"));
-                } else {
-                    setEnabled(true);
-                    setForeground(table.getForeground());
-                    setBackground(table.getBackground());
-                }
-            } else {
-                setText("");
-            }
-            return this;
+            JButton button = (JButton) value;
+
+            return button;
         }
     }
 
-    class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
+    //------------------------- INNER CLASS FOR ---------------------------
+    //---------------- LISTENING CLICKS ON TABLE BUTTONS ------------------
+    private class TableButtonListener extends MouseAdapter {
 
-        protected JButton button;
-        private String label;
-        private boolean isPushed;
-        private int row;
+        public TableButtonListener() {
 
-        public ButtonEditor() {
-            super();
-            button = new JButton();
-            button.setOpaque(true);
+        }
 
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    isPushed = true;
-                    fireEditingStopped();
+        public void mouseClicked(MouseEvent e) {
+            //get the column of the clicked cell
+            int column = table.getColumnModel().getColumnIndexAtX(e.getX());
+            //get the row of the clicked cell
+            int row = e.getY() / table.getRowHeight();
+
+            //check if row and column values are valid
+            if (row >= 0 && row < table.getRowCount() && column >= 0 && column < table.getColumnCount()) {
+                //get the object at the clicked cell
+                Object value = table.getValueAt(row, column);
+                //check if the object is a button
+                if (value instanceof JButton) {
+                    JButton button = (JButton) value;
+                    //call requestPair() only if the button is enabled
+                    if (button.isEnabled()) {
+                        controller.requestPair(playerList.get(row).getUserName());
+                    }
                 }
-            });
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            boolean hasPair = false;
-            boolean isSamePlayer = false;
-            if (value != null) {
-                hasPair = (boolean) value;
-                isSamePlayer = playerList.get(row).getUserName().equals(controller.getLogin().getUserName());
-                if (isSamePlayer) {
-                    label = "-";
-                } else {
-                    label = (hasPair ? "Tem par" : "Pedir par");
-                }
-            } else {
-                label = "";
             }
-
-//            if (isSelected) {
-//                button.setForeground(table.getSelectionForeground());
-//                button.setBackground(table.getSelectionBackground());
-//            } else {
-//                button.setForeground(table.getForeground());
-//                button.setBackground(table.getBackground());
-//            }
-//            label = (value == null ? "" : value.toString());
-            button.setText(label);
-            this.row = row;
-            isPushed = true;
-
-            button.setEnabled(!hasPair && !isSamePlayer);
-            if (hasPair || isSamePlayer) {
-                setForeground(UIManager.getColor("Button.disabledText"));
-                setBackground(UIManager.getColor("Button.disabledBackground"));
-            } else {
-                button.setForeground(table.getForeground());
-                button.setBackground(table.getBackground());
-            }
-            return button;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            if (isPushed) {
-                //invocar método para enviar pedido de formação de par a o servidor de gestão
-                System.out.println("Botão " + row + " premido");
-                //TODO: implementar pedido de par
-//                controller.requestPair(playerList.get(row).getUserName());
-            }
-            isPushed = false;
-            return label;
-        }
-
-        @Override
-        public boolean stopCellEditing() {
-            isPushed = false;
-            return super.stopCellEditing();
-        }
-
-        @Override
-        protected void fireEditingStopped() {
-            super.fireEditingStopped();
         }
     }
 }
