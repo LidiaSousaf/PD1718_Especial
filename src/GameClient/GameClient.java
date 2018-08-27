@@ -23,9 +23,9 @@ public class GameClient {
             ClientWindow view = new ClientWindow(globalController);
 
         } finally {
-            if(globalController != null){
-                globalController.shutdownClient();
-            }
+//            if(globalController != null){
+//                globalController.shutdownClient(0);
+//            }
         }
     }
 

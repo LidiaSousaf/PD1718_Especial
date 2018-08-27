@@ -5,19 +5,16 @@
 package GameClient.gui;
 
 import CommunicationCommons.LoggedPlayerInfo;
-import CommunicationCommons.RemoteClientInterface;
 
 import javax.swing.*;
-import java.awt.*;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoggedClientsPanel extends JPanel implements RemoteClientInterface {
+public class LoggedClientsPanel extends JPanel{
 
     private List<LoggedPlayerInfo> playerList;
 
-    public LoggedClientsPanel() throws RemoteException{
+    public LoggedClientsPanel(){
         this.playerList = new ArrayList<>();
     }
 
@@ -36,8 +33,7 @@ public class LoggedClientsPanel extends JPanel implements RemoteClientInterface 
         printPlayers();
     }
 
-    @Override
-    public void updateLoggedPlayers(List<LoggedPlayerInfo> playerList) throws RemoteException {
+    public void updateLoggedPlayers(List<LoggedPlayerInfo> playerList){
         //TODO: update logged clients table
         setPlayerList(playerList);
     }

@@ -66,7 +66,7 @@ public class GlobalController extends Observable {
         } catch (NotBoundException | MalformedURLException | RemoteException e) {
 //            JOptionPane.showMessageDialog(null, e.getMessage());
             System.err.println(e.getMessage());
-            System.exit(-1);
+            shutdownClient(-1);
         }
     }
 
@@ -106,7 +106,7 @@ public class GlobalController extends Observable {
         } catch (UnknownHostException e) {
             JOptionPane.showMessageDialog(null,
                     "Erro ao obter o endereço de rede do cliente: " + e.getMessage());
-            System.exit(-1);
+            shutdownClient(-1);
         }
     }
 
@@ -119,7 +119,7 @@ public class GlobalController extends Observable {
             JOptionPane.showMessageDialog(null, "O jogador não se encontra logado!");
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(null, "Erro inesperado: " + e);
-            System.exit(-1);
+            shutdownClient(-1);
         }
     }
 
@@ -147,7 +147,7 @@ public class GlobalController extends Observable {
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
 //            e.printStackTrace();
-            System.exit(-1);
+            shutdownClient(-1);
         }
     }
 
@@ -163,10 +163,12 @@ public class GlobalController extends Observable {
     }
 
     //-------------------------- OTHER METHODS ----------------------------
-    public void shutdownClient() {
+    public void shutdownClient(int exitStatus) {
         if (login != null) {
             logout();
         }
+
+        System.exit(exitStatus);
 
 //        unbindRemoteGameClient();
     }

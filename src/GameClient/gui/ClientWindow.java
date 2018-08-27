@@ -38,10 +38,9 @@ public class ClientWindow extends JFrame implements Observer {
             @Override
             public void windowClosing(WindowEvent e) {
 //                super.windowClosing(e);
-                globalController.shutdownClient();
                 threeInRowPanel.unbindClientCallback();
                 dispose();
-                System.exit(0);
+                globalController.shutdownClient(0);
             }
         });
 

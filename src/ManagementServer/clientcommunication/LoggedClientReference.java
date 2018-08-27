@@ -5,20 +5,20 @@ package ManagementServer.clientcommunication; /**
 import CommunicationCommons.RemoteClientInterface;
 
 public class LoggedClientReference {
-    private RemoteClientInterface clientReference;
+    private RemoteClientInterface clientCallback;
     private String userName;
 
-    public LoggedClientReference(RemoteClientInterface clientReference, String userName) {
-        this.clientReference = clientReference;
+    public LoggedClientReference(RemoteClientInterface clientCallback, String userName) {
+        this.clientCallback = clientCallback;
         this.userName = userName;
     }
 
-    public RemoteClientInterface getClientReference() {
-        return clientReference;
+    public RemoteClientInterface getClientCallback() {
+        return clientCallback;
     }
 
-    public void setClientReference(RemoteClientInterface clientReference) {
-        this.clientReference = clientReference;
+    public void setClientCallback(RemoteClientInterface clientCallback) {
+        this.clientCallback = clientCallback;
     }
 
     public String getUserName() {

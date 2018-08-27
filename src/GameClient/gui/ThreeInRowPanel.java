@@ -8,16 +8,13 @@ import GameClient.GlobalController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.rmi.NoSuchObjectException;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.Observable;
 import java.util.Observer;
 
 public class ThreeInRowPanel extends JPanel implements Observer {
 
     private GlobalController controller;
-    private LoggedClientsPanel clientsPanel;
+    private CallbackUpdatesPanel updatesPanel;
 
     public ThreeInRowPanel(GlobalController controller) {
         this.controller = controller;
@@ -31,13 +28,7 @@ public class ThreeInRowPanel extends JPanel implements Observer {
     }
 
     private void createComponents() {
-        try {
-            clientsPanel = new LoggedClientsPanel();
-            UnicastRemoteObject.exportObject(clientsPanel, 0);
-        } catch (RemoteException e) {
-            System.err.println("Erro ao criar interface de callback no cliente:\n" + e);
-            System.exit(-1);
-        }
+        updatesPanel = new CallbackUpdatesPanel(controller);
     }
 
     private void setUpLayout() {
@@ -45,8 +36,7 @@ public class ThreeInRowPanel extends JPanel implements Observer {
         this.setMinimumSize(new Dimension(650, 450));
 
         setLayout(new BorderLayout());
-        add(clientsPanel, BorderLayout.CENTER);
-
+        add(updatesPanel);
     }
 
     @Override
@@ -54,16 +44,11 @@ public class ThreeInRowPanel extends JPanel implements Observer {
         setVisible(controller.getLogin() != null);
     }
 
-    public void registerClientCallback() {
-        controller.registerClientCallback(clientsPanel);
-        clientsPanel.setPlayerList(controller.getLoggedPlayers());
+    public void registerClientCallback(){
+        updatesPanel.registerClientCallback();
     }
 
     public void unbindClientCallback() {
-        try {
-            UnicastRemoteObject.unexportObject(clientsPanel, true);
-        } catch (NoSuchObjectException e) {
-            e.printStackTrace();
-        }
+        updatesPanel.unbindClientCallback();
     }
 }

@@ -15,7 +15,6 @@ import DatabaseCommunication.models.Player;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class ClientManagementService extends UnicastRemoteObject implements ClientManagementInterface {
@@ -36,7 +35,13 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         if (playerRegister.isValid()) {
             Player newPlayer = new Player(playerRegister.getUserName(), playerRegister.getName(), playerRegister.getPassword());
             try {
-                databaseCommunication.registerPlayer(newPlayer);
+                if (databaseCommunication.registerPlayer(newPlayer)) {
+                    System.out.println("> New player " + playerRegister.getUserName() + " registered.");
+                    return true;
+                }
+
+                return false;
+
             } catch (InvalidPlayerException e) {
                 throw new InvalidCredentialsException("Credenciais de registo inválidas!");
             } catch (PlayerAlreadyExistsException e) {
@@ -45,8 +50,6 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         } else {
             throw new InvalidCredentialsException("Credenciais de registo inválidas!");
         }
-
-        return true;
     }
 
     @Override
@@ -81,17 +84,25 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
             try {
                 Player player = databaseCommunication.getPlayerByUserName(userName);
 
-                if(!player.isLogged()){
+                if (!player.isLogged()) {
                     throw new NotLoggedException();
                 }
 
-                LoggedClientReference clientReference = new LoggedClientReference(clientCallback, userName);
-                if (!clients.contains(clientReference)) {
-                    clients.add(clientReference);
-
-                    return true;
+                boolean found = false;
+                for (LoggedClientReference clientReference : clients) {
+                    if (clientReference.getUserName().equals(userName)) {
+                        found = true;
+                        clientReference.setClientCallback(clientCallback);
+                        break;
+                    }
                 }
-            }catch (PlayerNotFoundException e){
+
+                if (!found) {
+                    clients.add(new LoggedClientReference(clientCallback, userName));
+                }
+                return true;
+
+            } catch (PlayerNotFoundException e) {
                 throw new InvalidCredentialsException();
             }
         }
@@ -144,7 +155,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
 
         for (int i = 0; i < clients.size(); i++) {
             try {
-                clients.get(i).getClientReference().updateLoggedPlayers(playerList);
+                clients.get(i).getClientCallback().updateLoggedPlayers(playerList);
             } catch (RemoteException e) {
                 System.err.println("Error updating client " + clients.get(i).getUserName());
             }
