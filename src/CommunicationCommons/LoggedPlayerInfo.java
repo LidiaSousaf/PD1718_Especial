@@ -39,7 +39,7 @@ public class LoggedPlayerInfo implements Serializable {
         this.name = name;
     }
 
-    public boolean isHasPair() {
+    public boolean getHasPair() {
         return hasPair;
     }
 

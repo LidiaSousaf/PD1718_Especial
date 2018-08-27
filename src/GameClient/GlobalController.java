@@ -20,16 +20,14 @@ import java.util.Observable;
 public class GlobalController extends Observable {
 
     //----------------------------- VARIABLES -----------------------------
-//    private RemoteGameClient remoteGameClient;
     private ClientManagementInterface clientManagement;
     private PlayerLogin login;
-//    private List<LoggedPlayerInfo> loggedPlayers;
+    private boolean hasRequestedPair;
 
     //---------------------------- CONSTRUCTOR ----------------------------
     public GlobalController(String managementAddress) {
         startManagementServerConnection(managementAddress);
-
-//        loggedPlayers = new ArrayList<>();
+        hasRequestedPair = false;
     }
 
     //------------------------- GETTERS / SETTERS -------------------------
@@ -43,40 +41,26 @@ public class GlobalController extends Observable {
         notifyObservers(login);
     }
 
-//    public List<LoggedPlayerInfo> getLoggedPlayers() {
-//        return loggedPlayers;
-//    }
+    public boolean getHasRequestedPair() {
+        return hasRequestedPair;
+    }
 
-//    public void setLoggedPlayers(List<LoggedPlayerInfo> loggedPlayers) {
-//        this.loggedPlayers = loggedPlayers;
-//        for(int i = 0; i < loggedPlayers.size(); i++){
-//            System.out.println(loggedPlayers.get(i).getUserName());
-//        }
-//        setChanged();
-//        notifyObservers();
-//    }
+    public void setHasRequestedPair(boolean hasRequestedPair) {
+        this.hasRequestedPair = hasRequestedPair;
+    }
 
     //---------------------- MANAGEMENT COMMUNICATION ---------------------
     private void startManagementServerConnection(String managementAddress) {
         try {
-//            remoteGameClient = new RemoteGameClient();
             String managementServiceURL = "rmi://" + managementAddress + "/ClientManagementService";
             clientManagement = (ClientManagementInterface) Naming.lookup(managementServiceURL);
 
         } catch (NotBoundException | MalformedURLException | RemoteException e) {
-//            JOptionPane.showMessageDialog(null, e.getMessage());
-            System.err.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, "Erro ao estabelecer comunicação com o servidor de gestão:\n" + e.getMessage());
+            e.printStackTrace();
             shutdownClient(-1);
         }
     }
-
-//    private void unbindRemoteGameClient() {
-//        try {
-//            UnicastRemoteObject.unexportObject(remoteGameClient, true);
-//        } catch (NoSuchObjectException e) {
-//            System.err.println(e.getMessage());
-//        }
-//    }
 
     public void login(String userName, String password) {
         String ip = null;
@@ -101,7 +85,7 @@ public class GlobalController extends Observable {
             JOptionPane.showMessageDialog(null, "O jogador já está logado!");
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
-//            e.printStackTrace();
+            e.printStackTrace();
             System.exit(-1);
         } catch (UnknownHostException e) {
             JOptionPane.showMessageDialog(null,
@@ -146,7 +130,7 @@ public class GlobalController extends Observable {
             JOptionPane.showMessageDialog(null, "O utilizador com Username " + userName + " já se encontra registado!");
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
-//            e.printStackTrace();
+            e.printStackTrace();
             shutdownClient(-1);
         }
     }
@@ -170,6 +154,5 @@ public class GlobalController extends Observable {
 
         System.exit(exitStatus);
 
-//        unbindRemoteGameClient();
     }
 }

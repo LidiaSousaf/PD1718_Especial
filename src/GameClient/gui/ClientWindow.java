@@ -30,8 +30,8 @@ public class ClientWindow extends JFrame implements Observer {
         setUpLayout();
 
         setVisible(true);
-        this.setSize(700, 500);
-        this.setMinimumSize(new Dimension(650, 450));
+        this.setSize(840, 600);
+        this.setMinimumSize(new Dimension(750, 500));
 //        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {

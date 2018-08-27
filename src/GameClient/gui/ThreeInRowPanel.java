@@ -15,6 +15,7 @@ public class ThreeInRowPanel extends JPanel implements Observer {
 
     private GlobalController controller;
     private CallbackUpdatesPanel updatesPanel;
+    private GamePanel gamePanel;
 
     public ThreeInRowPanel(GlobalController controller) {
         this.controller = controller;
@@ -29,14 +30,16 @@ public class ThreeInRowPanel extends JPanel implements Observer {
 
     private void createComponents() {
         updatesPanel = new CallbackUpdatesPanel(controller);
+        gamePanel = new GamePanel();
     }
 
     private void setUpLayout() {
-        this.setSize(700, 500);
-        this.setMinimumSize(new Dimension(650, 450));
+        this.setSize(840, 600);
+        this.setMinimumSize(new Dimension(750, 500));
 
         setLayout(new BorderLayout());
-        add(updatesPanel);
+        add(updatesPanel, BorderLayout.EAST);
+        add(gamePanel, BorderLayout.CENTER);
     }
 
     @Override

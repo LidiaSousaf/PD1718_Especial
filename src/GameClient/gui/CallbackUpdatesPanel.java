@@ -29,7 +29,7 @@ public class CallbackUpdatesPanel extends JPanel {
     }
 
     private void createComponents(){
-        this.loggedClientsPanel = new LoggedClientsPanel();
+        this.loggedClientsPanel = new LoggedClientsPanel(controller);
 //        this.loggedClientsPanel.setPlayerList(controller.getLoggedPlayers());
         try {
             this.callback = new RemoteGameClient();
@@ -41,12 +41,18 @@ public class CallbackUpdatesPanel extends JPanel {
     }
 
     private void setUpLayout(){
-        setLayout(new BorderLayout());
+        setBackground(Color.GRAY);
+        this.setSize(300, 600);
+        this.setMinimumSize(new Dimension(250, 500));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        loggedClientsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(Box.createVerticalStrut(10));
         add(loggedClientsPanel);
+
+        validate();
     }
 
     public void registerClientCallback(){
-        this.loggedClientsPanel.setPlayerList(controller.getLoggedPlayers());
         controller.registerClientCallback(callback);
     }
 
@@ -56,6 +62,13 @@ public class CallbackUpdatesPanel extends JPanel {
         } catch (NoSuchObjectException e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateLoggedClientsPanel(List<LoggedPlayerInfo> playerList){
+        remove(loggedClientsPanel);
+        loggedClientsPanel = new LoggedClientsPanel(controller);
+        add(loggedClientsPanel);
+        revalidate();
     }
 
 
@@ -71,7 +84,7 @@ public class CallbackUpdatesPanel extends JPanel {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    loggedClientsPanel.updateLoggedPlayers(playerList);
+                    updateLoggedClientsPanel(playerList);
                 }
             });
         }

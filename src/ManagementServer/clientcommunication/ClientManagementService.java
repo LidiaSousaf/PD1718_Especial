@@ -100,6 +100,9 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
                 if (!found) {
                     clients.add(new LoggedClientReference(clientCallback, userName));
                 }
+
+                clientCallback.updateLoggedPlayers(getLoggedPlayers());
+
                 return true;
 
             } catch (PlayerNotFoundException e) {
