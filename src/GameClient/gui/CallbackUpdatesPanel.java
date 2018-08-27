@@ -5,6 +5,7 @@
 package GameClient.gui;
 
 import CommunicationCommons.LoggedPlayerInfo;
+import CommunicationCommons.PairRequest;
 import CommunicationCommons.RemoteClientInterface;
 import GameClient.GlobalController;
 
@@ -82,6 +83,12 @@ public class CallbackUpdatesPanel extends JPanel {
                     updateLoggedClientsPanel(playerList);
                 }
             });
+        }
+
+        @Override
+        public void notifyNewPairRequest(PairRequest pairRequest) throws RemoteException {
+            JOptionPane.showMessageDialog(null,
+                    "O jogador " + pairRequest.getPlayer1() + " pediu para formar par.");
         }
     }
 }

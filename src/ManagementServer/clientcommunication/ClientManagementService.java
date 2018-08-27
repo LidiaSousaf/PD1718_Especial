@@ -1,15 +1,10 @@
 package ManagementServer.clientcommunication;
 
 import CommunicationCommons.*;
-import CommunicationCommons.remoteexceptions.AlreadyExistsRemoteException;
-import CommunicationCommons.remoteexceptions.AlreadyLoggedRemoteException;
-import CommunicationCommons.remoteexceptions.InvalidCredentialsException;
-import CommunicationCommons.remoteexceptions.NotLoggedException;
+import CommunicationCommons.remoteexceptions.*;
 import DatabaseCommunication.DatabaseCommunication;
-import DatabaseCommunication.exceptions.AlreadyLoggedInException;
-import DatabaseCommunication.exceptions.InvalidPlayerException;
-import DatabaseCommunication.exceptions.PlayerAlreadyExistsException;
-import DatabaseCommunication.exceptions.PlayerNotFoundException;
+import DatabaseCommunication.exceptions.*;
+import DatabaseCommunication.models.Pair;
 import DatabaseCommunication.models.Player;
 
 import java.rmi.RemoteException;
@@ -26,6 +21,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     public ClientManagementService(DatabaseCommunication databaseCommunication) throws RemoteException {
         this.databaseCommunication = databaseCommunication;
         this.databaseCommunication.logoutAllPlayers();
+        this.databaseCommunication.deleteAllPairs();
         this.clients = new ArrayList<>();
     }
 
@@ -79,7 +75,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     }
 
     @Override
-    public boolean registerRemoteClient(String userName, RemoteClientInterface clientCallback) throws InvalidCredentialsException, NotLoggedException, RemoteException {
+    public synchronized boolean registerRemoteClient(String userName, RemoteClientInterface clientCallback) throws InvalidCredentialsException, NotLoggedException, RemoteException {
         if (clientCallback != null) {
             try {
                 Player player = databaseCommunication.getPlayerByUserName(userName);
@@ -146,6 +142,44 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         return playerList;
     }
 
+    @Override
+    public boolean requestPair(PairRequest pairRequest) throws NotLoggedException, InvalidCredentialsException, AlreadyPairedException, RemoteException {
+        try {
+            Player player1 = databaseCommunication.getPlayerByUserName(pairRequest.getPlayer1());
+            Player player2 = databaseCommunication.getPlayerByUserName(pairRequest.getPlayer2());
+
+            if (!player1.isLogged() || !player2.isLogged()) {
+                throw new NotLoggedException();
+            }
+
+            if (databaseCommunication.checkIfPlayerHasPair(player1)) {
+                throw new AlreadyPairedException("O jogador " + player1.getUserName() + " já tem par formado.");
+            }
+            if (databaseCommunication.checkIfPlayerHasPair(player2)) {
+                throw new AlreadyPairedException("O jogador " + player1.getUserName() + " já tem par formado.");
+            }
+
+            try {
+                Pair pair = databaseCommunication.getPairForPlayers(player1, player2);
+                System.out.println(">---- Players " + player1.getUserName()
+                        + " and " + player2.getUserName() + " are already paired ----<");
+            } catch (PairNotFoundException e) {
+                if (databaseCommunication.registerPair(player1, player2)) {
+                    System.out.println("> New pair registered for "
+                            + player1.getUserName() + " and " + player2.getUserName() + ".");
+
+                    notifyNewPairRequest(pairRequest);
+
+                    return true;
+                }
+            }
+
+        } catch (PlayerNotFoundException e) {
+            throw new InvalidCredentialsException();
+        }
+        return false;
+    }
+
     //-------------------------- OTHER METHODS ----------------------------
     private void updateLoggedClients() {
 
@@ -165,6 +199,22 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         }
     }
 
+    //TODO: implement the rest of the pair requests operations
+
+    private void notifyNewPairRequest(PairRequest pairRequest){
+        for(LoggedClientReference clientReference : clients){
+            if(clientReference.getUserName().equals(pairRequest.getPlayer2())){
+                try {
+                    clientReference.getClientCallback().notifyNewPairRequest(pairRequest);
+                } catch (RemoteException e) {
+                    System.err.println("Error notifying new pair request to client " + clientReference.getUserName());
+                }
+
+                break;
+            }
+        }
+    }
+
     private void removeClientReference(String userName) {
         for (int i = 0; i < clients.size(); i++) {
             if (clients.get(i).getUserName().equals(userName)) {
@@ -176,5 +226,9 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
 
     public void logoutAllPlayers() {
         databaseCommunication.logoutAllPlayers();
+    }
+
+    public void deleteAllPairs() {
+        databaseCommunication.deleteAllPairs();
     }
 }

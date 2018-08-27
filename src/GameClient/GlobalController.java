@@ -1,10 +1,7 @@
 package GameClient;
 
 import CommunicationCommons.*;
-import CommunicationCommons.remoteexceptions.AlreadyExistsRemoteException;
-import CommunicationCommons.remoteexceptions.AlreadyLoggedRemoteException;
-import CommunicationCommons.remoteexceptions.InvalidCredentialsException;
-import CommunicationCommons.remoteexceptions.NotLoggedException;
+import CommunicationCommons.remoteexceptions.*;
 
 import javax.swing.*;
 import java.net.InetAddress;
@@ -135,7 +132,7 @@ public class GlobalController extends Observable {
         }
     }
 
-    public List<LoggedPlayerInfo> getLoggedPlayers(){
+    public List<LoggedPlayerInfo> getLoggedPlayers() {
         List<LoggedPlayerInfo> playerList = new ArrayList<>();
         try {
             playerList = clientManagement.getLoggedPlayers();
@@ -146,8 +143,21 @@ public class GlobalController extends Observable {
         return playerList;
     }
 
-    public void requestPair(String userName){
-        System.out.println("Pedido par ao jogador " + userName);
+    public void requestPair(String invitedPlayer) {
+//        System.out.println("Pedido par ao jogador " + userName);
+        try {
+            clientManagement.requestPair(new PairRequest(login.getUserName(), invitedPlayer));
+        } catch (NotLoggedException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está logado!");
+        } catch (InvalidCredentialsException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
+        } catch (AlreadyPairedException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            shutdownClient(-1);
+        }
     }
 
     //-------------------------- OTHER METHODS ----------------------------

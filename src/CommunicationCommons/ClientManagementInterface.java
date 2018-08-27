@@ -1,9 +1,6 @@
 package CommunicationCommons;
 
-import CommunicationCommons.remoteexceptions.AlreadyExistsRemoteException;
-import CommunicationCommons.remoteexceptions.AlreadyLoggedRemoteException;
-import CommunicationCommons.remoteexceptions.InvalidCredentialsException;
-import CommunicationCommons.remoteexceptions.NotLoggedException;
+import CommunicationCommons.remoteexceptions.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -15,4 +12,5 @@ public interface ClientManagementInterface extends Remote {
     boolean registerRemoteClient(String userName, RemoteClientInterface clientCallback) throws InvalidCredentialsException, NotLoggedException, RemoteException;
     boolean logout(String userName) throws InvalidCredentialsException, RemoteException;
     List<LoggedPlayerInfo> getLoggedPlayers() throws RemoteException;
+    boolean requestPair(PairRequest pairRequest) throws NotLoggedException, InvalidCredentialsException, AlreadyPairedException, RemoteException;
 }

@@ -148,6 +148,7 @@ public class DatabaseCommunication {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
+                throw new PlayerNotFoundException(userName);
             }
         }
         return null;
@@ -234,8 +235,9 @@ public class DatabaseCommunication {
                 + player.getUserName() + "';";
 
         boolean result = execute(sql);
-        if (result)
+        if (result) {
             player.setLogged(false);
+        }
 
         return result;
     }
@@ -278,12 +280,50 @@ public class DatabaseCommunication {
 
     //----------------------- PAIRS TABLE ---------------------
     public boolean checkIfPlayerHasPair(Player player) {
-        String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE " +
+        String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE (" +
                 Constants.PLAYER1_ID + " = '" + player.getId() + "' OR " +
-                Constants.PLAYER2_ID + " = '" + player.getId() + "';";
+                Constants.PLAYER2_ID + " = '" + player.getId() + "') AND " +
+                Constants.FORMED + " = '1';";
         ResultSet result = executeQuery(query);
 
         return parsePairList(result).size() > 0;
+    }
+
+    public Pair getPairForPlayers(Player player1, Player player2) throws PairNotFoundException {
+        String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE (" +
+                Constants.PLAYER1_ID + " = '" + player1.getId() + "' AND " +
+                Constants.PLAYER2_ID + " = '" + player2.getId() + "') OR (" +
+                Constants.PLAYER1_ID + " = '" + player2.getId() + "' AND " +
+                Constants.PLAYER2_ID + " = '" + player1.getId() + "');";
+
+        return parsePair(executeQuery(query));
+    }
+
+    public Pair getPair(Pair pair) throws PairNotFoundException {
+        String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE "
+                + Constants.PLAYER1_ID + " = '" + pair.getPlayer1Id() + "' AND "
+                + Constants.PLAYER2_ID + " = '" + pair.getPlayer2Id() + "';";
+        return parsePair(executeQuery(query));
+    }
+
+    private Pair parsePair(ResultSet result) throws PairNotFoundException {
+        if (result != null) {
+            try {
+                if (result.next()) {
+
+                    return new Pair(
+                            result.getInt(Constants.PLAYER1_ID),
+                            result.getInt(Constants.PLAYER2_ID),
+                            result.getInt(Constants.FORMED) == 1);
+                } else {
+                    throw new PairNotFoundException();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new PairNotFoundException();
+            }
+        }
+        return null;
     }
 
     private List<Pair> parsePairList(ResultSet result) {
@@ -297,13 +337,46 @@ public class DatabaseCommunication {
                             result.getInt(Constants.FORMED) == 1));
                 }
             } catch (SQLException e) {
-                System.err.println("Error parsing player list: " + e);
+                System.err.println("Error parsing pair list: " + e);
             }
         }
 
         return pairList;
     }
 
+    public boolean deletePair(Pair pair) {
+        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
+                + Constants.PLAYER1_ID + " = '" + pair.getPlayer1Id() + "' AND "
+                + Constants.PLAYER2_ID + "='" + pair.getPlayer2Id() + "';";
+        return execute(sql);
+    }
+
+    public boolean registerPair(Player player1, Player player2) {
+        String sql = "INSERT INTO " + Constants.PAIRS_TABLE + " ("
+                + Constants.PLAYER1_ID + ", " + Constants.PLAYER2_ID
+                + ", " + Constants.FORMED + ") VALUES ("
+                + player1.getId() + ", " + player2.getId() + ", 0);";
+
+        return execute(sql);
+    }
+
+    public boolean deleteAllPairs() {
+        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + ";";
+
+        return execute(sql);
+    }
+
+    public boolean completePairFormation(Pair pair) {
+        String sql = "UPDATE " + Constants.PAIRS_TABLE + " SET " + Constants.FORMED
+                + " = '1' WHERE " + Constants.PLAYER1_ID + " = '" + pair.getPlayer1Id()
+                + "' AND " + Constants.PLAYER2_ID + " = '" + pair.getPlayer2Id() + "';";
+
+        boolean result = execute(sql);
+        if (result) {
+            pair.setFormed(true);
+        }
+        return result;
+    }
 
     //---------------------- OTHER METHODS --------------------
     private ResultSet executeQuery(String sql) {

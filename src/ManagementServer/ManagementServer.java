@@ -65,8 +65,6 @@ public class ManagementServer {
             }
 
             //Register the service
-//            clientManagementURL = "rmi://" + InetAddress.getLocalHost().getHostAddress() + "/ClientManagementService";
-//            Naming.bind(clientManagementURL, clientManagementService);
             registry.bind("ClientManagementService", clientManagementService);
             System.out.println("Client Management service registered (ClientManagementService).");
 
@@ -81,12 +79,12 @@ public class ManagementServer {
     private static void unbindClientManagementService(ClientManagementService clientManagementService){
 
         clientManagementService.logoutAllPlayers();
+        clientManagementService.deleteAllPairs();
+
         try {
-            //Remove from registry the reference to the service
-//            Naming.unbind(clientManagementURL);
             //End the service
             UnicastRemoteObject.unexportObject(clientManagementService, true);
-        } catch (RemoteException /*| NotBoundException | MalformedURLException*/ e) {
+        } catch (RemoteException e) {
             System.err.println("An error occurred:" + e);
             System.exit(-1);
         }
