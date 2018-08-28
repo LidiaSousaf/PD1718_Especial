@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3b7d30a8-71b9-4e14-b8ec-4c84a4d4d79f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/CommunicationCommons/remoteexceptions/PairNotFoundRemoteException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/GameClient/gui/PairPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/CommunicationCommons/ClientManagementInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CommunicationCommons/ClientManagementInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CommunicationCommons/LoggedPlayerInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CommunicationCommons/LoggedPlayerInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/CommunicationCommons/RemoteClientInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CommunicationCommons/RemoteClientInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DatabaseCommunication/DatabaseCommunication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DatabaseCommunication/DatabaseCommunication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DatabaseCommunication/models/Pair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DatabaseCommunication/models/DbPair.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DatabaseCommunication/models/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DatabaseCommunication/models/DbPlayer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameClient/GlobalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameClient/GlobalController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameClient/gui/CallbackUpdatesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameClient/gui/CallbackUpdatesPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameClient/gui/LoggedClientsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameClient/gui/LoggedClientsPanel.java" afterDir="false" />
@@ -26,33 +22,34 @@
     <session id="1837397593">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
+          <entry key="project.closed" value="3" />
           <entry key="project.open.time.2" value="1" />
+          <entry key="project.open.time.22" value="1" />
           <entry key="project.open.time.36" value="1" />
           <entry key="project.open.time.6" value="1" />
-          <entry key="project.opened" value="3" />
+          <entry key="project.opened" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="java" value="126" />
+          <entry key="java" value="136" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JAVA" value="126" />
+          <entry key="JAVA" value="136" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="14745" />
-          <entry key="txt" value="313" />
+          <entry key="java" value="18845" />
+          <entry key="txt" value="357" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="14745" />
-          <entry key="PLAIN_TEXT" value="313" />
+          <entry key="JAVA" value="18845" />
+          <entry key="PLAIN_TEXT" value="357" />
         </counts>
       </usages-collector>
     </session>
@@ -62,29 +59,72 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/PairRequest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
+            <state relative-caret-position="289">
               <caret line="19" column="18" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ManagementServer/clientcommunication/ClientManagementService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="222">
-              <caret line="316" lean-forward="true" selection-start-line="316" selection-end-line="316" />
+            <state relative-caret-position="4267">
+              <caret line="261" lean-forward="true" selection-start-line="261" selection-end-line="261" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/GameClient/gui/CallbackUpdatesPanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1224">
-              <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
+            <state relative-caret-position="212">
+              <caret line="190" column="17" lean-forward="true" selection-start-line="190" selection-start-column="17" selection-end-line="190" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#3577#3578#0" expanded="true" />
+                <element signature="e#3636#3637#0" expanded="true" />
+                <element signature="e#3540#3541#0" expanded="true" />
+                <element signature="e#3616#3617#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/GameClient/gui/LoggedClientsPanel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="430">
+              <caret line="55" column="32" lean-forward="true" selection-start-line="55" selection-start-column="32" selection-end-line="55" selection-end-column="32" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1214#1215#0" expanded="true" />
+                <element signature="e#1291#1292#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/GameClient/GlobalController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="178">
+              <caret line="193" column="23" lean-forward="true" selection-start-line="193" selection-start-column="23" selection-end-line="193" selection-end-column="23" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1272#1273#0" expanded="true" />
+                <element signature="e#1305#1306#0" expanded="true" />
+                <element signature="e#1220#1221#0" expanded="true" />
+                <element signature="e#1254#1255#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/RemoteClientInterface.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="12" column="46" selection-start-line="12" selection-start-column="46" selection-end-line="12" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -128,18 +168,20 @@
         <option value="$PROJECT_DIR$/src/ManagementServer/ManagementServer.java" />
         <option value="$PROJECT_DIR$/src/CommunicationCommons/remoteexceptions/AlreadyPairedException.java" />
         <option value="$PROJECT_DIR$/src/CommunicationCommons/remoteexceptions/PairNotFoundRemoteException.java" />
-        <option value="$PROJECT_DIR$/src/GameClient/GlobalController.java" />
-        <option value="$PROJECT_DIR$/src/GameClient/gui/LoggedClientsPanel.java" />
-        <option value="$PROJECT_DIR$/src/CommunicationCommons/RemoteClientInterface.java" />
-        <option value="$PROJECT_DIR$/src/CommunicationCommons/ClientManagementInterface.java" />
         <option value="$PROJECT_DIR$/src/CommunicationCommons/LoggedPlayerInfo.java" />
         <option value="$PROJECT_DIR$/src/DatabaseCommunication/DatabaseCommunication.java" />
-        <option value="$PROJECT_DIR$/src/ManagementServer/clientcommunication/ClientManagementService.java" />
-        <option value="$PROJECT_DIR$/src/GameClient/gui/CallbackUpdatesPanel.java" />
         <option value="$PROJECT_DIR$/src/DatabaseCommunication/models/Pair.java" />
         <option value="$PROJECT_DIR$/src/DatabaseCommunication/models/DbPair.java" />
         <option value="$PROJECT_DIR$/src/DatabaseCommunication/models/Player.java" />
         <option value="$PROJECT_DIR$/src/DatabaseCommunication/models/DbPlayer.java" />
+        <option value="$PROJECT_DIR$/src/CommunicationCommons/RemoteClientInterface.java" />
+        <option value="$PROJECT_DIR$/src/CommunicationCommons/ClientManagementInterface.java" />
+        <option value="$PROJECT_DIR$/src/GameClient/gui/PlayerInfoPanel.java" />
+        <option value="$PROJECT_DIR$/src/GameClient/gui/LoggedClientsPanel.java" />
+        <option value="$PROJECT_DIR$/src/GameClient/gui/PairPanel.java" />
+        <option value="$PROJECT_DIR$/src/ManagementServer/clientcommunication/ClientManagementService.java" />
+        <option value="$PROJECT_DIR$/src/GameClient/GlobalController.java" />
+        <option value="$PROJECT_DIR$/src/GameClient/gui/CallbackUpdatesPanel.java" />
       </list>
     </option>
   </component>
@@ -177,25 +219,6 @@
               <item name="PD1718_Especial" type="b2602c69:ProjectViewProjectNode" />
               <item name="PD1718_Especial" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="CommunicationCommons" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PD1718_Especial" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PD1718_Especial" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="DatabaseCommunication" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PD1718_Especial" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PD1718_Especial" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="DatabaseCommunication" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PD1718_Especial" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PD1718_Especial" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="GameClient" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -222,8 +245,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -331,7 +354,8 @@
       <updated>1535278653459</updated>
       <workItem from="1535278658690" duration="17559000" />
       <workItem from="1535359628228" duration="26585000" />
-      <workItem from="1535446155657" duration="8748000" />
+      <workItem from="1535446155657" duration="8853000" />
+      <workItem from="1535463006329" duration="14636000" />
     </task>
     <task id="LOCAL-00001" summary="Progress made in updating logged players list in GameClient application.">
       <created>1535309482967</created>
@@ -368,23 +392,30 @@
       <option name="project" value="LOCAL" />
       <updated>1535390797850</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Pair operations on ManagementServer side">
+      <created>1535456105635</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1535456105635</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="52892000" />
+    <option name="totallyTimeSpent" value="67633000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25718608" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26096824" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3295082" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49924356" weight="0.3295082" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49924356" visible="true" weight="0.19180328" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -414,7 +445,8 @@
     <MESSAGE value="Players table is being updated (kind of...)" />
     <MESSAGE value="Improvements on updating players table" />
     <MESSAGE value="Started working on pair requests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Started working on pair requests" />
+    <MESSAGE value="Pair operations on ManagementServer side" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pair operations on ManagementServer side" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/remoteexceptions/InvalidCredentialsException.java">
@@ -442,13 +474,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="276">
           <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/StartupPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="35" lean-forward="true" selection-start-line="35" selection-end-line="35" />
         </state>
       </provider>
     </entry>
@@ -505,13 +530,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/LoginPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="57" column="29" selection-start-line="57" selection-start-column="29" selection-end-line="57" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/GameClient/gui/tablemodels/PlayersTableModel.java" />
     <entry file="file://$PROJECT_DIR$/src/DatabaseCommunication/exceptions/PairNotFoundException.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -554,52 +572,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/LoggedClientsPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="21" column="46" lean-forward="true" selection-start-line="21" selection-start-column="46" selection-end-line="21" selection-end-column="46" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/GlobalController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1007">
-          <caret line="151" column="13" lean-forward="true" selection-start-line="151" selection-start-column="13" selection-end-line="151" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1220#1221#0" expanded="true" />
-            <element signature="e#1254#1255#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/RemoteClientInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="9" column="30" lean-forward="true" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/ClientManagementInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="443">
-          <caret line="34" column="38" selection-start-line="34" selection-start-column="38" selection-end-line="34" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/LoggedPlayerInfo.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
           <caret line="21" column="29" lean-forward="true" selection-start-line="21" selection-start-column="29" selection-end-line="21" selection-end-column="29" />
-          <folding>
-            <element signature="e#761#762#0" expanded="true" />
-            <element signature="e#792#793#0" expanded="true" />
-            <element signature="e#911#912#0" expanded="true" />
-            <element signature="e#938#939#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -610,20 +586,6 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/PairRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="19" column="18" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ManagementServer/clientcommunication/ClientManagementService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="316" lean-forward="true" selection-start-line="316" selection-end-line="316" />
         </state>
       </provider>
     </entry>
@@ -645,13 +607,109 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/CallbackUpdatesPanel.java">
+    <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/PairRequest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1224">
-          <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
+        <state relative-caret-position="289">
+          <caret line="19" column="18" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/RemoteClientInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="12" column="46" selection-start-line="12" selection-start-column="46" selection-end-line="12" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/PlayerInfoPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="394">
+          <caret line="41" column="39" selection-start-line="41" selection-start-column="39" selection-end-line="41" selection-end-column="39" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/StartupPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="383">
+          <caret line="35" lean-forward="true" selection-start-line="35" selection-end-line="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/LoginPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="51" column="17" lean-forward="true" selection-start-line="51" selection-start-column="17" selection-end-line="51" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/PairPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1020">
+          <caret line="62" column="50" lean-forward="true" selection-start-line="62" selection-start-column="50" selection-end-line="62" selection-end-column="50" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#809#810#0" expanded="true" />
+            <element signature="e#864#865#0" expanded="true" />
+            <element signature="e#591#592#0" expanded="true" />
+            <element signature="e#613#614#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/CommunicationCommons/ClientManagementInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="12" column="33" selection-start-line="12" selection-start-column="33" selection-end-line="12" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/LoggedClientsPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="430">
+          <caret line="55" column="32" lean-forward="true" selection-start-line="55" selection-start-column="32" selection-end-line="55" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1214#1215#0" expanded="true" />
+            <element signature="e#1291#1292#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/GlobalController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="193" column="23" lean-forward="true" selection-start-line="193" selection-start-column="23" selection-end-line="193" selection-end-column="23" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1272#1273#0" expanded="true" />
+            <element signature="e#1305#1306#0" expanded="true" />
+            <element signature="e#1220#1221#0" expanded="true" />
+            <element signature="e#1254#1255#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/CallbackUpdatesPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="190" column="17" lean-forward="true" selection-start-line="190" selection-start-column="17" selection-end-line="190" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3577#3578#0" expanded="true" />
+            <element signature="e#3636#3637#0" expanded="true" />
+            <element signature="e#3540#3541#0" expanded="true" />
+            <element signature="e#3616#3617#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ManagementServer/clientcommunication/ClientManagementService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4267">
+          <caret line="261" lean-forward="true" selection-start-line="261" selection-end-line="261" />
         </state>
       </provider>
     </entry>

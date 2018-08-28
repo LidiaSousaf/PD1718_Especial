@@ -51,7 +51,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     }
 
     @Override
-    public synchronized boolean login(PlayerLogin login) throws InvalidCredentialsException, AlreadyLoggedRemoteException, RemoteException {
+    public synchronized String login(PlayerLogin login) throws InvalidCredentialsException, AlreadyLoggedRemoteException, RemoteException {
         if (login.isValid()) {
             try {
                 DbPlayer player = databaseCommunication.getPlayerByUserName(login.getUserName());
@@ -59,10 +59,10 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
                 player.setIpAddress(login.getIpAddress());
                 if (databaseCommunication.login(player)) {
 
-                    System.out.println("> DbPlayer " + login.getUserName() + " logged in.");
+                    System.out.println("> Player " + login.getUserName() + " logged in.");
                     updateLoggedClients();
 
-                    return true;
+                    return player.getName();
                 }
 
             } catch (PlayerNotFoundException e) {
@@ -73,7 +73,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         } else {
             throw new InvalidCredentialsException("Credenciais de login inválidas!");
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
             DbPlayer player = databaseCommunication.getPlayerByUserName(userName);
             if (databaseCommunication.logout(player)) {
                 removeClientReference(userName);
-                System.out.println("> DbPlayer " + userName + " logged out.");
+                System.out.println("> Player " + userName + " logged out.");
                 deleteAllPairsForPlayer(player);
                 updateLoggedClients();
                 return true;
@@ -131,25 +131,12 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
 
     @Override
     public List<LoggedPlayerInfo> getLoggedPlayers() throws RemoteException {
-//        List<DbPlayer> dbPlayers = databaseCommunication.getLoggedPlayers();
-//
-//        List<LoggedPlayerInfo> playerList = new ArrayList<>(dbPlayers.size());
-//
-//        for (int i = 0; i < dbPlayers.size(); i++) {
-//            DbPlayer dbPlayer = dbPlayers.get(i);
-////            System.out.println(dbPlayer.getUserName());
-//            boolean hasPair = databaseCommunication.checkIfPlayerIsPaired(dbPlayer);
-//            playerList.add(new LoggedPlayerInfo(dbPlayer.getUserName(), dbPlayer.getName(), hasPair));
-//        }
-//
-//        return playerList;
-
         return internalGetLoggedPlayers();
     }
 
     //-------------------------- PAIRS OPERATIONS -------------------------
     @Override
-    public boolean requestPair(PairRequest pairRequest) throws NotLoggedException, InvalidCredentialsException, AlreadyPairedException, RemoteException {
+    public synchronized boolean requestPair(PairRequest pairRequest) throws NotLoggedException, InvalidCredentialsException, AlreadyPairedException, RemoteException {
         try {
             DbPlayer player1 = databaseCommunication.getPlayerByUserName(pairRequest.getPlayer1());
             DbPlayer player2 = databaseCommunication.getPlayerByUserName(pairRequest.getPlayer2());
@@ -209,22 +196,23 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
 
                 pairRequest.setFormed(true);
 
-                if (notifyAcceptedPair(pairRequest)) {
-                    if (databaseCommunication.completePairFormation(pair)) {
-                        cancelAllPendingPairsForPlayer(player1);
-                        rejectAllPendingPairsForPlayer(player1);
+                if (databaseCommunication.completePairFormation(pair)) {
+                    notifyAcceptedPair(pairRequest);
 
-                        cancelAllPendingPairsForPlayer(player2);
-                        rejectAllPendingPairsForPlayer(player2);
+                    cancelAllPendingPairsForPlayer(player1);
+                    rejectAllPendingPairsForPlayer(player1);
 
-                        System.out.println(">---- DbPair formation between " + player1.getUserName()
-                                + " and " + player2.getUserName() + " completed ----<");
+                    cancelAllPendingPairsForPlayer(player2);
+                    rejectAllPendingPairsForPlayer(player2);
 
-                        updateLoggedClients();
+                    System.out.println(">---- Pair formation between " + player1.getUserName()
+                            + " and " + player2.getUserName() + " completed ----<");
 
-                        return true;
-                    }
+                    updateLoggedClients();
+
+                    return true;
                 }
+
             } catch (PairNotFoundException e) {
                 throw new PairNotFoundRemoteException();
             }
@@ -249,9 +237,10 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
                 DbPair pair = databaseCommunication.getPairForPlayers(player1, player2);
 
                 databaseCommunication.deletePair(pair);
+
                 notifyRejectedPair(pairRequest.getPlayer2(), pairRequest.getPlayer1());
 
-                System.out.println(">---- DbPair request between " + player1.getUserName()
+                System.out.println(">---- Pair request between " + player1.getUserName()
                         + " and " + player2.getUserName() + " was rejected ----<");
 
                 return true;
@@ -266,7 +255,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     }
 
     @Override
-    public boolean cancelPair(String userName, PairRequest pairRequest) throws InvalidCredentialsException, NotLoggedException, PairNotFoundRemoteException, RemoteException {
+    public synchronized boolean cancelPair(String userName, PairRequest pairRequest) throws InvalidCredentialsException, NotLoggedException, PairNotFoundRemoteException, RemoteException {
         try {
             DbPlayer player1 = databaseCommunication.getPlayerByUserName(pairRequest.getPlayer1());
             DbPlayer player2 = databaseCommunication.getPlayerByUserName(pairRequest.getPlayer2());
@@ -274,7 +263,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
             String user1 = player1.getUserName();
             String user2 = player2.getUserName();
 
-            if (!userName.equals(user1) && userName.equals(user2)) {
+            if (!userName.equals(user1) && !userName.equals(user2)) {
                 throw new InvalidCredentialsException();
             }
 
@@ -292,9 +281,10 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
                     playerToNotify = user2;
                 }
                 databaseCommunication.deletePair(pair);
+
                 notifyCanceledPair(userName, playerToNotify);
 
-                System.out.println(">---- DbPair between " + player1.getUserName()
+                System.out.println(">---- Pair between " + player1.getUserName()
                         + " and " + player2.getUserName() + " was canceled ----<");
 
                 if (pair.isFormed()) {
@@ -344,50 +334,72 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     }
 
     private void notifyNewPairRequest(PairRequest pairRequest) {
-        LoggedClientReference clientReference = getClientReference(pairRequest.getPlayer2());
-        if (clientReference != null) {
-            try {
-                clientReference.getClientCallback().notifyNewPairRequest(pairRequest);
-            } catch (RemoteException e) {
-                System.err.println("Error notifying new pair request to client " + clientReference.getUserName());
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LoggedClientReference clientReference = getClientReference(pairRequest.getPlayer2());
+                if (clientReference != null) {
+                    try {
+                        clientReference.getClientCallback().notifyNewPairRequest(pairRequest);
+                    } catch (RemoteException e) {
+                        System.err.println("Error notifying new pair request to client " + clientReference.getUserName());
+                    }
+                }
             }
-        }
+        });
+        t.start();
     }
 
     private void notifyRejectedPair(String rejectingPlayer, String playerToNotify) {
-        LoggedClientReference reference = getClientReference(playerToNotify);
-        if (reference != null) {
-            try {
-                reference.getClientCallback().notifyRejectedPair(rejectingPlayer);
-            } catch (RemoteException e) {
-                System.err.println("Error notifying rejection of pair request to client " + playerToNotify);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LoggedClientReference reference = getClientReference(playerToNotify);
+                if (reference != null) {
+                    try {
+                        reference.getClientCallback().notifyRejectedPair(rejectingPlayer);
+                    } catch (RemoteException e) {
+                        System.err.println("Error notifying rejection of pair request to client " + playerToNotify);
+                    }
+                }
             }
-        }
+        });
+        t.start();
     }
 
     private void notifyCanceledPair(String cancelingPlayer, String playerToNotify) {
-        LoggedClientReference reference = getClientReference(playerToNotify);
-        if (reference != null) {
-            try {
-                reference.getClientCallback().notifyCanceledPair(cancelingPlayer);
-            } catch (RemoteException e) {
-                System.err.println("Error notifying canceling of pair request to client " + playerToNotify);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LoggedClientReference reference = getClientReference(playerToNotify);
+                if (reference != null) {
+                    try {
+                        reference.getClientCallback().notifyCanceledPair(cancelingPlayer);
+                    } catch (RemoteException e) {
+                        System.err.println("Error notifying canceling of pair request to client " + playerToNotify);
+                    }
+                }
             }
-        }
+        });
+        t.start();
     }
 
-    private boolean notifyAcceptedPair(PairRequest pairRequest) {
-        LoggedClientReference reference = getClientReference(pairRequest.getPlayer1());
-        if (reference != null) {
-            try {
-                reference.getClientCallback().notifyAcceptedPair(pairRequest);
-                return true;
-            } catch (RemoteException e) {
-                System.err.println("Error notifying acceptance of pair request to client " + pairRequest.getPlayer1());
-            }
-        }
+    private void notifyAcceptedPair(PairRequest pairRequest) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LoggedClientReference reference = getClientReference(pairRequest.getPlayer1());
+                if (reference != null) {
+                    try {
+                        reference.getClientCallback().notifyAcceptedPair(pairRequest);
+                    } catch (RemoteException e) {
+                        System.err.println("Error notifying acceptance of pair request to client " + pairRequest.getPlayer1());
+                    }
+                }
 
-        return false;
+            }
+        });
+        t.start();
     }
 
     private void deleteAllPairsForPlayer(DbPlayer player) {
@@ -418,7 +430,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         }
 
         databaseCommunication.deleteAllPairsForPlayer(player);
-        System.out.println("--> All pairs for player " + player + " where deleted from DB.");
+        System.out.println("--> All pairs for player " + player.getUserName() + " where deleted from DB.");
     }
 
     private void cancelAllPendingPairsForPlayer(DbPlayer player) {
@@ -473,6 +485,13 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     }
 
     public void logoutAllPlayers() {
+        for (LoggedClientReference clientReference : clients) {
+            try {
+                clientReference.getClientCallback().forceLogout();
+            } catch (RemoteException e) {
+                System.err.println("Error forcing player " + clientReference.getUserName() + " to logout!");
+            }
+        }
         databaseCommunication.logoutAllPlayers();
         System.out.println("--> Logged out all players <--");
     }

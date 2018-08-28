@@ -56,13 +56,17 @@ public class LoggedClientsPanel extends JPanel {
     private void setUpLayout() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        add(Box.createVerticalStrut(10));
+        setSize(320, table.getRowHeight() * 10);
+        setMaximumSize(new Dimension(320, table.getRowHeight() * 10));
+
+//        add(Box.createVerticalStrut(10));
 
         panelTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(panelTitle);
 
-        add(Box.createVerticalStrut(5));
+        add(Box.createVerticalStrut(10));
 
+        scroll.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(scroll);
         setVisible(true);
     }

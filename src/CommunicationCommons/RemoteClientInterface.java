@@ -10,4 +10,5 @@ public interface RemoteClientInterface extends Remote {
     void notifyCanceledPair(String cancelingPlayer) throws RemoteException;
     void notifyRejectedPair(String invitedPlayer) throws RemoteException;
     void notifyAcceptedPair(PairRequest pairRequest) throws RemoteException;
+    void forceLogout() throws RemoteException;
 }

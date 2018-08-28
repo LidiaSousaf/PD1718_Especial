@@ -19,12 +19,14 @@ public class GlobalController extends Observable {
     //----------------------------- VARIABLES -----------------------------
     private ClientManagementInterface clientManagement;
     private PlayerLogin login;
+    private String playerName;
     private PairRequest pairRequest;
 
     //---------------------------- CONSTRUCTOR ----------------------------
     public GlobalController(String managementAddress) {
         startManagementServerConnection(managementAddress);
         login = null;
+        playerName = null;
         pairRequest = null;
     }
 
@@ -37,6 +39,16 @@ public class GlobalController extends Observable {
         this.login = login;
         setChanged();
         notifyObservers(login);
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+        setChanged();
+        notifyObservers(playerName);
     }
 
     public PairRequest getPairRequest() {
@@ -74,9 +86,12 @@ public class GlobalController extends Observable {
                 return;
             }
 
-            if (clientManagement.login(loginAttempt)) {
+            String name = null;
+            name = clientManagement.login(loginAttempt);
+            if (name != null) {
                 setLogin(loginAttempt);
-                JOptionPane.showMessageDialog(null, "Login efetuado com sucesso.");
+                setPlayerName(name);
+//                JOptionPane.showMessageDialog(null, "Login efetuado com sucesso.");
             }
 
         } catch (InvalidCredentialsException e) {
@@ -86,7 +101,7 @@ public class GlobalController extends Observable {
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
             e.printStackTrace();
-            System.exit(-1);
+            shutdownClient(-1);
         } catch (UnknownHostException e) {
             JOptionPane.showMessageDialog(null,
                     "Erro ao obter o endereço de rede do cliente: " + e.getMessage());
@@ -155,9 +170,10 @@ public class GlobalController extends Observable {
 
         try {
             PairRequest newRequest = new PairRequest(login.getUserName(), invitedPlayer);
-            if (clientManagement.requestPair(newRequest)) {
-                setPairRequest(newRequest);
-            }
+            clientManagement.requestPair(newRequest);
+            setPairRequest(newRequest);
+//                JOptionPane.showMessageDialog(null, "Pedido de par enviado para o jogador " + invitedPlayer);
+
 
         } catch (NotLoggedException e) {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está logado!");
@@ -165,6 +181,62 @@ public class GlobalController extends Observable {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
         } catch (AlreadyPairedException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            shutdownClient(-1);
+        }
+    }
+
+    public void cancelPair() {
+        try {
+            clientManagement.cancelPair(login.getUserName(), pairRequest);
+            setPairRequest(null);
+        } catch (InvalidCredentialsException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
+        } catch (NotLoggedException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está logado!");
+        } catch (PairNotFoundRemoteException e) {
+            JOptionPane.showMessageDialog(null, "O par indicado já não existe na BD!");
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            shutdownClient(-1);
+        }
+    }
+
+    public void acceptPair(PairRequest newPairRequest) {
+        try {
+            clientManagement.acceptPair(newPairRequest);
+            newPairRequest.setFormed(true);
+            setPairRequest(newPairRequest);
+
+        } catch (InvalidCredentialsException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
+        } catch (NotLoggedException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está logado!");
+        } catch (AlreadyPairedException e) {
+            JOptionPane.showMessageDialog(null, "O jogador "
+                    + newPairRequest.getPlayer1() + " já tem par formado com outro jogador.");
+        } catch (PairNotFoundRemoteException e) {
+            JOptionPane.showMessageDialog(null, "O par indicado já não existe na BD!");
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            shutdownClient(-1);
+        }
+    }
+
+    public void rejectPair(PairRequest newPairRequest) {
+        try {
+            clientManagement.rejectPair(newPairRequest);
+            setPairRequest(null);
+        } catch (InvalidCredentialsException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
+        } catch (NotLoggedException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está logado!");
+        } catch (PairNotFoundRemoteException e) {
+            JOptionPane.showMessageDialog(null, "O par indicado já não existe na BD!");
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
             e.printStackTrace();

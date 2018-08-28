@@ -10,7 +10,7 @@ public interface ClientManagementInterface extends Remote {
     boolean registerPlayer(PlayerRegister playerRegister)
             throws AlreadyExistsRemoteException, InvalidCredentialsException, RemoteException;
 
-    boolean login(PlayerLogin login)
+    String login(PlayerLogin login)
             throws InvalidCredentialsException, AlreadyLoggedRemoteException, RemoteException;
 
     boolean registerRemoteClient(String userName, RemoteClientInterface clientCallback)
