@@ -6,7 +6,7 @@ package DatabaseCommunication.models;
 
 import java.io.Serializable;
 
-public class Player implements Serializable {
+public class DbPlayer implements Serializable {
 
     //------------------------ CONSTANTS ----------------------
     public static final Long serialVersionUID = 10L;
@@ -21,7 +21,7 @@ public class Player implements Serializable {
     private boolean logged;
 
     //---------------------- CONSTRUCTORS ---------------------
-    public Player(String userName, String name, String password, String ipAddress, int id, boolean logged) {
+    public DbPlayer(String userName, String name, String password, String ipAddress, int id, boolean logged) {
         this.userName = userName;
         this.name = name;
         this.password = password;
@@ -30,11 +30,11 @@ public class Player implements Serializable {
         this.logged = logged;
     }
 
-    public Player(String userName, String name, String password, String ipAddress) {
+    public DbPlayer(String userName, String name, String password, String ipAddress) {
         this(userName, name, password, ipAddress, INVALID_ID, false);
     }
 
-    public Player(String userName, String name, String password) {
+    public DbPlayer(String userName, String name, String password) {
         this(userName, name, password, "", INVALID_ID, false);
     }
 

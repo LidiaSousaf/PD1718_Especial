@@ -6,7 +6,7 @@ package DatabaseCommunication.models;
 
 import java.io.Serializable;
 
-public class Pair implements Serializable {
+public class DbPair implements Serializable {
     //------------------------ CONSTANTS ----------------------
     public static final Long serialVersionUID = 4L;
 
@@ -16,7 +16,7 @@ public class Pair implements Serializable {
     private boolean formed;
 
     //---------------------- CONSTRUCTORS ---------------------
-    public Pair(int player1Id, int player2Id, boolean formed) {
+    public DbPair(int player1Id, int player2Id, boolean formed) {
         this.player1Id = player1Id;
         this.player2Id = player2Id;
         this.formed = formed;

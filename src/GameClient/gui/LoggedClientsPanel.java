@@ -84,7 +84,7 @@ public class LoggedClientsPanel extends JPanel {
             boolean isSamePlayer = playerInfo.getUserName().equals(controller.getLogin().getUserName());
             String buttonText = isSamePlayer ? " - " : "Pedir par";
             JButton button = new JButton(buttonText);
-            button.setEnabled(!playerInfo.getHasPair() && !isSamePlayer && !controller.getHasRequestedPair());
+            button.setEnabled(!playerInfo.isPaired() && !isSamePlayer);
 
             tableModel.addRow(new Object[]{playerInfo.getUserName(), playerInfo.getName(), button});
         }

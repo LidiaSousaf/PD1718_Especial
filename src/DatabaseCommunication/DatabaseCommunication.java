@@ -4,8 +4,8 @@
 
 package DatabaseCommunication;
 
-import DatabaseCommunication.models.Pair;
-import DatabaseCommunication.models.Player;
+import DatabaseCommunication.models.DbPair;
+import DatabaseCommunication.models.DbPlayer;
 import DatabaseCommunication.exceptions.*;
 
 import java.sql.*;
@@ -110,13 +110,13 @@ public class DatabaseCommunication {
     }
 
     //---------------------- PLAYERS TABLE --------------------
-    public Player getPlayerByUserName(String userName) throws PlayerNotFoundException {
+    public DbPlayer getPlayerByUserName(String userName) throws PlayerNotFoundException {
         String query = "SELECT * FROM " + Constants.PLAYERS_TABLE + " WHERE " + Constants.USERNAME + " = '" + userName + "';";
 
         return parsePlayer(query, userName);
     }
 
-    public Player getPlayerById(int id) throws PlayerNotFoundException {
+    public DbPlayer getPlayerById(int id) throws PlayerNotFoundException {
         if (id < 1) {
             throw new PlayerNotFoundException(id);
         }
@@ -125,7 +125,7 @@ public class DatabaseCommunication {
         return parsePlayer(query, "" + id);
     }
 
-    public Player parsePlayer(String query, String userName) throws PlayerNotFoundException {
+    public DbPlayer parsePlayer(String query, String userName) throws PlayerNotFoundException {
         ResultSet result = executeQuery(query);
 
         if (result != null) {
@@ -136,7 +136,7 @@ public class DatabaseCommunication {
                         ip = "";
                     }
 
-                    return new Player(
+                    return new DbPlayer(
                             result.getString(Constants.USERNAME),
                             result.getString(Constants.NAME),
                             result.getString(Constants.PASSWORD),
@@ -164,7 +164,7 @@ public class DatabaseCommunication {
         return true;
     }
 
-    public boolean registerPlayer(Player player) throws InvalidPlayerException, PlayerAlreadyExistsException {
+    public boolean registerPlayer(DbPlayer player) throws InvalidPlayerException, PlayerAlreadyExistsException {
         if (!player.isValid()) {
             throw new InvalidPlayerException();
         }
@@ -193,9 +193,9 @@ public class DatabaseCommunication {
         return execute(sql);
     }
 
-    public boolean login(Player player) throws PlayerNotFoundException, AlreadyLoggedInException {
+    public boolean login(DbPlayer player) throws PlayerNotFoundException, AlreadyLoggedInException {
 
-        Player playerInDb = getPlayerByUserName(player.getUserName());
+        DbPlayer playerInDb = getPlayerByUserName(player.getUserName());
 
         if (playerInDb.isLogged()) {
             throw new AlreadyLoggedInException();
@@ -222,7 +222,7 @@ public class DatabaseCommunication {
         }
     }
 
-    public boolean logout(Player player) throws PlayerNotFoundException {
+    public boolean logout(DbPlayer player) throws PlayerNotFoundException {
         if (player == null) {
             throw new PlayerNotFoundException();
         }
@@ -251,14 +251,14 @@ public class DatabaseCommunication {
         execute(sql);
     }
 
-    public List<Player> getLoggedPlayers() {
+    public List<DbPlayer> getLoggedPlayers() {
         String query = "SELECT * FROM " + Constants.PLAYERS_TABLE + " WHERE " + Constants.LOGGED + " = '1';";
         ResultSet result = executeQuery(query);
         return parsePlayerList(result);
     }
 
-    private List<Player> parsePlayerList(ResultSet result) {
-        List<Player> playerList = new ArrayList<>();
+    private List<DbPlayer> parsePlayerList(ResultSet result) {
+        List<DbPlayer> playerList = new ArrayList<>();
 
         if (result != null) {
             try {
@@ -266,7 +266,7 @@ public class DatabaseCommunication {
                     String ip = result.getString(Constants.IP_ADDRESS);
                     if (result.wasNull())
                         ip = "";
-                    playerList.add(new Player(result.getString(Constants.USERNAME), result.getString(Constants.NAME),
+                    playerList.add(new DbPlayer(result.getString(Constants.USERNAME), result.getString(Constants.NAME),
                             result.getString(Constants.PASSWORD), ip,
                             result.getInt(Constants.ID), true));
                 }
@@ -279,7 +279,7 @@ public class DatabaseCommunication {
     }
 
     //----------------------- PAIRS TABLE ---------------------
-    public boolean checkIfPlayerHasPair(Player player) {
+    public boolean checkIfPlayerIsPaired(DbPlayer player) {
         String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE (" +
                 Constants.PLAYER1_ID + " = '" + player.getId() + "' OR " +
                 Constants.PLAYER2_ID + " = '" + player.getId() + "') AND " +
@@ -289,7 +289,7 @@ public class DatabaseCommunication {
         return parsePairList(result).size() > 0;
     }
 
-    public Pair getPairForPlayers(Player player1, Player player2) throws PairNotFoundException {
+    public DbPair getPairForPlayers(DbPlayer player1, DbPlayer player2) throws PairNotFoundException {
         String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE (" +
                 Constants.PLAYER1_ID + " = '" + player1.getId() + "' AND " +
                 Constants.PLAYER2_ID + " = '" + player2.getId() + "') OR (" +
@@ -299,19 +299,49 @@ public class DatabaseCommunication {
         return parsePair(executeQuery(query));
     }
 
-    public Pair getPair(Pair pair) throws PairNotFoundException {
+    public DbPair getPair(DbPair pair) throws PairNotFoundException {
         String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE "
                 + Constants.PLAYER1_ID + " = '" + pair.getPlayer1Id() + "' AND "
                 + Constants.PLAYER2_ID + " = '" + pair.getPlayer2Id() + "';";
         return parsePair(executeQuery(query));
     }
 
-    private Pair parsePair(ResultSet result) throws PairNotFoundException {
+    public List<DbPair> getAllPairsForPlayer(DbPlayer player) {
+        String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE " +
+                Constants.PLAYER1_ID + " = '" + player.getId() + "' OR " +
+                Constants.PLAYER2_ID + " = '" + player.getId() + "';";
+
+        ResultSet result = executeQuery(query);
+
+        return parsePairList(result);
+    }
+
+    public List<DbPair> getPendingPairsForPlayer1(DbPlayer player1) {
+        String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE " +
+                Constants.PLAYER1_ID + " = '" + player1.getId() + "' AND " +
+                Constants.FORMED + " = '0';";
+
+        ResultSet result = executeQuery(query);
+
+        return parsePairList(result);
+    }
+
+    public List<DbPair> getPendingPairsForPlayer2(DbPlayer player2) {
+        String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE " +
+                Constants.PLAYER1_ID + " = '" + player2.getId() + "' AND " +
+                Constants.FORMED + " = '0';";
+
+        ResultSet result = executeQuery(query);
+
+        return parsePairList(result);
+    }
+
+    private DbPair parsePair(ResultSet result) throws PairNotFoundException {
         if (result != null) {
             try {
                 if (result.next()) {
 
-                    return new Pair(
+                    return new DbPair(
                             result.getInt(Constants.PLAYER1_ID),
                             result.getInt(Constants.PLAYER2_ID),
                             result.getInt(Constants.FORMED) == 1);
@@ -326,13 +356,13 @@ public class DatabaseCommunication {
         return null;
     }
 
-    private List<Pair> parsePairList(ResultSet result) {
-        List<Pair> pairList = new ArrayList<>();
+    private List<DbPair> parsePairList(ResultSet result) {
+        List<DbPair> pairList = new ArrayList<>();
 
         if (result != null) {
             try {
                 while (result.next()) {
-                    pairList.add(new Pair(result.getInt(Constants.PLAYER1_ID),
+                    pairList.add(new DbPair(result.getInt(Constants.PLAYER1_ID),
                             result.getInt(Constants.PLAYER2_ID),
                             result.getInt(Constants.FORMED) == 1));
                 }
@@ -344,14 +374,35 @@ public class DatabaseCommunication {
         return pairList;
     }
 
-    public boolean deletePair(Pair pair) {
+    public boolean deleteAllPairsForPlayer(DbPlayer player){
+        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
+                + Constants.PLAYER1_ID + " = '" + player.getId() + "' OR "
+                + Constants.PLAYER2_ID + "='" + player.getId() + "';";
+        return execute(sql);
+    }
+
+    public boolean deletePendingPairsForPlayer1(DbPlayer player1){
+        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
+                + Constants.PLAYER1_ID + " = '" + player1.getId() + "' AND "
+                + Constants.FORMED + "='0';";
+        return execute(sql);
+    }
+
+    public boolean deletePendingPairsForPlayer2(DbPlayer player2){
+        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
+                + Constants.PLAYER2_ID + " = '" + player2.getId() + "' AND "
+                + Constants.FORMED + "='0';";
+        return execute(sql);
+    }
+
+    public boolean deletePair(DbPair pair) {
         String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
                 + Constants.PLAYER1_ID + " = '" + pair.getPlayer1Id() + "' AND "
                 + Constants.PLAYER2_ID + "='" + pair.getPlayer2Id() + "';";
         return execute(sql);
     }
 
-    public boolean registerPair(Player player1, Player player2) {
+    public boolean registerPair(DbPlayer player1, DbPlayer player2) {
         String sql = "INSERT INTO " + Constants.PAIRS_TABLE + " ("
                 + Constants.PLAYER1_ID + ", " + Constants.PLAYER2_ID
                 + ", " + Constants.FORMED + ") VALUES ("
@@ -366,7 +417,7 @@ public class DatabaseCommunication {
         return execute(sql);
     }
 
-    public boolean completePairFormation(Pair pair) {
+    public boolean completePairFormation(DbPair pair) {
         String sql = "UPDATE " + Constants.PAIRS_TABLE + " SET " + Constants.FORMED
                 + " = '1' WHERE " + Constants.PLAYER1_ID + " = '" + pair.getPlayer1Id()
                 + "' AND " + Constants.PLAYER2_ID + " = '" + pair.getPlayer2Id() + "';";

@@ -13,13 +13,13 @@ public class LoggedPlayerInfo implements Serializable {
     //------------------------ VARIABLES ----------------------
     private String userName;
     private String name;
-    private boolean hasPair;
+    private boolean paired;
 
     //---------------------- CONSTRUCTORS ---------------------
-    public LoggedPlayerInfo(String userName, String name, boolean hasPair) {
+    public LoggedPlayerInfo(String userName, String name, boolean paired) {
         this.userName = userName;
         this.name = name;
-        this.hasPair = hasPair;
+        this.paired = paired;
     }
 
     //------------------- GETTERS / SETTERS -------------------
@@ -39,11 +39,11 @@ public class LoggedPlayerInfo implements Serializable {
         this.name = name;
     }
 
-    public boolean getHasPair() {
-        return hasPair;
+    public boolean isPaired() {
+        return paired;
     }
 
-    public void setHasPair(boolean hasPair) {
-        this.hasPair = hasPair;
+    public void setPaired(boolean paired) {
+        this.paired = paired;
     }
 }

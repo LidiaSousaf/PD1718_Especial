@@ -75,6 +75,7 @@ public class CallbackUpdatesPanel extends JPanel {
 
         }
 
+        //TODO: implement client side DbPair operations
         @Override
         public void updateLoggedPlayers(List<LoggedPlayerInfo> playerList) throws RemoteException {
             SwingUtilities.invokeLater(new Runnable() {
@@ -89,6 +90,30 @@ public class CallbackUpdatesPanel extends JPanel {
         public void notifyNewPairRequest(PairRequest pairRequest) throws RemoteException {
             JOptionPane.showMessageDialog(null,
                     "O jogador " + pairRequest.getPlayer1() + " pediu para formar par.");
+        }
+
+        @Override
+        public void notifyCanceledPair(String cancelingPlayer) throws RemoteException {
+            JOptionPane.showMessageDialog(null,
+                    "O jogador " + cancelingPlayer + " desfez o par.");
+
+            controller.setPairRequest(null);
+        }
+
+        @Override
+        public void notifyRejectedPair(String invitedPlayer) throws RemoteException {
+            JOptionPane.showMessageDialog(null,
+                    "O jogador " + invitedPlayer + " rejeitou o pedido de par.");
+
+            controller.setPairRequest(null);
+        }
+
+        @Override
+        public void notifyAcceptedPair(PairRequest pairRequest) throws RemoteException {
+            JOptionPane.showMessageDialog(null,
+                    "O jogador " + pairRequest.getPlayer2() + " aceitou o pedido de par.");
+
+            controller.setPairRequest(pairRequest);
         }
     }
 }

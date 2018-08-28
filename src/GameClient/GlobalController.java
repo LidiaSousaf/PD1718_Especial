@@ -19,12 +19,13 @@ public class GlobalController extends Observable {
     //----------------------------- VARIABLES -----------------------------
     private ClientManagementInterface clientManagement;
     private PlayerLogin login;
-    private boolean hasRequestedPair;
+    private PairRequest pairRequest;
 
     //---------------------------- CONSTRUCTOR ----------------------------
     public GlobalController(String managementAddress) {
         startManagementServerConnection(managementAddress);
-        hasRequestedPair = false;
+        login = null;
+        pairRequest = null;
     }
 
     //------------------------- GETTERS / SETTERS -------------------------
@@ -38,12 +39,14 @@ public class GlobalController extends Observable {
         notifyObservers(login);
     }
 
-    public boolean getHasRequestedPair() {
-        return hasRequestedPair;
+    public PairRequest getPairRequest() {
+        return pairRequest;
     }
 
-    public void setHasRequestedPair(boolean hasRequestedPair) {
-        this.hasRequestedPair = hasRequestedPair;
+    public void setPairRequest(PairRequest pairRequest) {
+        this.pairRequest = pairRequest;
+        setChanged();
+        notifyObservers(pairRequest);
     }
 
     //---------------------- MANAGEMENT COMMUNICATION ---------------------
@@ -145,8 +148,17 @@ public class GlobalController extends Observable {
 
     public void requestPair(String invitedPlayer) {
 //        System.out.println("Pedido par ao jogador " + userName);
+
+        if (pairRequest != null) {
+            return;
+        }
+
         try {
-            clientManagement.requestPair(new PairRequest(login.getUserName(), invitedPlayer));
+            PairRequest newRequest = new PairRequest(login.getUserName(), invitedPlayer);
+            if (clientManagement.requestPair(newRequest)) {
+                setPairRequest(newRequest);
+            }
+
         } catch (NotLoggedException e) {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está logado!");
         } catch (InvalidCredentialsException e) {
