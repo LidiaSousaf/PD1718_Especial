@@ -157,49 +157,81 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
         public void notifyNewPairRequest(PairRequest pairRequest) throws RemoteException {
 //            JOptionPane.showMessageDialog(null,
 //                    "O jogador " + pairRequest.getPlayer1() + " pediu para formar par.");
-            String[] options = {"Aceitar", "Rejeitar"};
-            int answer = JOptionPane.showOptionDialog(null,
-                    "O jogador " + pairRequest.getPlayer1() + " pediu para formar par.",
-                    "Pedido de par",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options,
-                    options[1]);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    String[] options = {"Aceitar", "Rejeitar"};
+                    int answer = JOptionPane.showOptionDialog(null,
+                            "O jogador " + pairRequest.getPlayer1() + " pediu para formar par.",
+                            "Pedido de par",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[1]);
 
-            if(answer == 0){
-                controller.acceptPair(pairRequest);
-            }else{
-                controller.rejectPair(pairRequest);
-            }
+                    if (answer == 0) {
+                        controller.acceptPair(pairRequest);
+                    } else {
+                        controller.rejectPair(pairRequest);
+                    }
+                }
+            });
+
         }
 
         @Override
         public void notifyCanceledPair(String cancelingPlayer) throws RemoteException {
-            controller.setPairRequest(null);
-            JOptionPane.showMessageDialog(null,
-                    "O jogador " + cancelingPlayer + " desfez o par.");
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    controller.setPairRequest(null);
+                    JOptionPane.showMessageDialog(null,
+                            "O jogador " + cancelingPlayer + " desfez o par.");
+                }
+            });
+
         }
 
         @Override
         public void notifyRejectedPair(String invitedPlayer) throws RemoteException {
-            controller.setPairRequest(null);
-            JOptionPane.showMessageDialog(null,
-                    "O jogador " + invitedPlayer + " rejeitou o pedido de par.");
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    controller.setPairRequest(null);
+                    JOptionPane.showMessageDialog(null,
+                            "O jogador " + invitedPlayer + " rejeitou o pedido de par.");
+                }
+            });
+
         }
 
         @Override
         public void notifyAcceptedPair(PairRequest pairRequest) throws RemoteException {
-            controller.setPairRequest(pairRequest);
 
-            JOptionPane.showMessageDialog(null,
-                    "O jogador " + pairRequest.getPlayer2() + " aceitou o pedido de par.");
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    controller.setPairRequest(pairRequest);
+                    JOptionPane.showMessageDialog(null,
+                            "O jogador " + pairRequest.getPlayer2() + " aceitou o pedido de par.");
+                }
+            });
+
         }
 
         @Override
         public void forceLogout() throws RemoteException {
-            JOptionPane.showMessageDialog(null, "O servidor de gestão encerrou.\n" +
-                    "A aplicação vai ser fechada.");
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(null, "O servidor de gestão encerrou.\n" +
+                            "A aplicação vai ser fechada.");
+                }
+            });
+
         }
     }
 }

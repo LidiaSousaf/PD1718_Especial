@@ -31,7 +31,9 @@ public interface ClientManagementInterface extends Remote {
             throws InvalidCredentialsException, NotLoggedException,
             PairNotFoundRemoteException, RemoteException;
 
-    boolean cancelPair(String userName,PairRequest pairRequest)
+    boolean cancelPair(String userName, PairRequest pairRequest)
             throws InvalidCredentialsException, NotLoggedException,
             PairNotFoundRemoteException, RemoteException;
+
+    String getGameServerAddress() throws NoGameServerException, RemoteException;
 }

@@ -6,6 +6,7 @@ import DatabaseCommunication.DatabaseCommunication;
 import DatabaseCommunication.exceptions.*;
 import DatabaseCommunication.models.DbPair;
 import DatabaseCommunication.models.DbPlayer;
+import ManagementServer.gameservercommunication.HeartbeatService;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -16,13 +17,17 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     //----------------------------- VARIABLES -----------------------------
     private DatabaseCommunication databaseCommunication;
     private ArrayList<LoggedClientReference> clients;
+    private HeartbeatService heartbeatService;
 
     //---------------------------- CONSTRUCTOR ----------------------------
-    public ClientManagementService(DatabaseCommunication databaseCommunication) throws RemoteException {
+    public ClientManagementService(DatabaseCommunication databaseCommunication, HeartbeatService heartbeatService)
+            throws RemoteException {
         this.databaseCommunication = databaseCommunication;
         this.databaseCommunication.logoutAllPlayers();
         this.databaseCommunication.deleteAllPairs();
         this.clients = new ArrayList<>();
+
+        this.heartbeatService = heartbeatService;
     }
 
     //--------------------- REMOTE INTERFACE METHODS ----------------------
@@ -300,6 +305,17 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         } catch (PlayerNotFoundException e) {
             throw new InvalidCredentialsException();
         }
+    }
+
+    //------------------------- GET GAME SERVER ---------------------------
+    @Override
+    public String getGameServerAddress() throws NoGameServerException, RemoteException {
+        String gameServerIp = heartbeatService.getGameServer();
+        if (gameServerIp == null) {
+            throw new NoGameServerException();
+        }
+
+        return gameServerIp;
     }
 
     //-------------------------- OTHER METHODS ----------------------------

@@ -2,6 +2,8 @@ package ManagementServer;
 
 import DatabaseCommunication.DatabaseCommunication;
 import ManagementServer.clientcommunication.ClientManagementService;
+import ManagementServer.gameservercommunication.HeartbeatService;
+import ManagementServer.gameservercommunication.HeartbeatServiceHandler;
 
 import java.io.IOException;
 import java.rmi.AlreadyBoundException;
@@ -16,8 +18,6 @@ public class ManagementServer {
     private final static String DATABASE_PASSWORD = "ThreeInRow_1718";
     private final static String DATABASE_ADDRESS = "localhost";
 
-    private static String clientManagementURL;
-
     public static void main(String[] args) {
         //Get the Ip address for the database
         String databaseIpAddress = DATABASE_ADDRESS;
@@ -28,31 +28,38 @@ public class ManagementServer {
         DatabaseCommunication databaseCommunication = new DatabaseCommunication(DATABASE_NAME,
                 DATABASE_USER_NAME, DATABASE_PASSWORD, databaseIpAddress);
 
-        if(!databaseCommunication.connect()){
+        if (!databaseCommunication.connect()) {
             System.out.println("Connection to database failed. Shutting down Management Server");
             System.exit(-1);
         }
 
         try {
-            ClientManagementService clientManagementService = startClientManagementService(databaseCommunication);
+            HeartbeatService heartbeatService = startHeartbeatService(databaseIpAddress);
+            HeartbeatServiceHandler heartbeatHandler = new HeartbeatServiceHandler(heartbeatService);
+            heartbeatHandler.start();
+            ClientManagementService clientManagementService = startClientManagementService(databaseCommunication,
+                    heartbeatService);
 
             System.out.println("Press \"Enter\" to exit.");
             System.in.read();
 
+            heartbeatHandler.setStop(true);
             unbindClientManagementService(clientManagementService);
         } catch (IOException e) {
             System.err.println("An error occurred:" + e);
             System.exit(-1);
         } finally {
             databaseCommunication.closeConnection();
+            System.out.println("Database connection ended.\nManagement Server terminated.");
         }
     }
 
-    private static ClientManagementService startClientManagementService(DatabaseCommunication databaseCommunication) {
+    private static ClientManagementService startClientManagementService(DatabaseCommunication databaseCommunication,
+                                                                        HeartbeatService heartbeatService) {
         ClientManagementService clientManagementService = null;
         try {
             //Load the service
-            clientManagementService = new ClientManagementService(databaseCommunication);
+            clientManagementService = new ClientManagementService(databaseCommunication, heartbeatService);
             System.out.println("Client Management service loaded.");
 
             //Start the registry on default port 1099.
@@ -76,7 +83,7 @@ public class ManagementServer {
         return clientManagementService;
     }
 
-    private static void unbindClientManagementService(ClientManagementService clientManagementService){
+    private static void unbindClientManagementService(ClientManagementService clientManagementService) {
 
         clientManagementService.logoutAllPlayers();
         clientManagementService.deleteAllPairs();
@@ -84,9 +91,38 @@ public class ManagementServer {
         try {
             //End the service
             UnicastRemoteObject.unexportObject(clientManagementService, true);
+            System.out.println("ClientManagement service ended.");
         } catch (RemoteException e) {
             System.err.println("An error occurred:" + e);
             System.exit(-1);
         }
+    }
+
+    private static HeartbeatService startHeartbeatService(String databaseIp) {
+        HeartbeatService heartbeatService = null;
+        try {
+            //Load the service
+            heartbeatService = new HeartbeatService(databaseIp);
+            System.out.println("Heartbeat service loaded.");
+
+            //Start the registry on default port 1099.
+            Registry registry;
+            try {
+                registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+            } catch (Exception e) {
+                registry = LocateRegistry.getRegistry();
+                System.out.println("Registry is already in use on port " + Registry.REGISTRY_PORT);
+            }
+
+            //Register the service
+            registry.bind("HeartbeatService", heartbeatService);
+            System.out.println("Heartbeat service registered (HeartbeatService).");
+
+        } catch (AlreadyBoundException | IOException e) {
+            System.err.println("An error occurred:" + e);
+            System.exit(-1);
+        }
+
+        return heartbeatService;
     }
 }

@@ -85,6 +85,7 @@ public class DatabaseCommunication {
     public boolean connect() {
         String connectionString = "jdbc:mysql://" + dbIpAddress + ":" + dbPort + "/"
                 + databaseName + Constants.CONNECTION_STRING_END;
+        System.out.println(connectionString);
         try {
             connection = DriverManager.getConnection("jdbc:mysql://" + dbIpAddress + ":" + dbPort + "/"
                     + databaseName + Constants.CONNECTION_STRING_END, dbUserName, dbPassword);
@@ -450,7 +451,7 @@ public class DatabaseCommunication {
     private boolean execute(String sql) {
         Statement statement = null;
         if (connection == null)
-            throw new NotConnectedException("Ainda não foi estabelecida a comunicação com a base de dados");
+            throw new NotConnectedException("Not connected to the database yet.");
         try {
             statement = connection.createStatement();
             statement.execute(sql);
