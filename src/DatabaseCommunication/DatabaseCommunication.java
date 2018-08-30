@@ -4,6 +4,7 @@
 
 package DatabaseCommunication;
 
+import DatabaseCommunication.models.DbGame;
 import DatabaseCommunication.models.DbPair;
 import DatabaseCommunication.models.DbPlayer;
 import DatabaseCommunication.exceptions.*;
@@ -365,8 +366,9 @@ public class DatabaseCommunication {
                 e.printStackTrace();
                 throw new PairNotFoundException();
             }
+        } else {
+            throw new PairNotFoundException();
         }
-        return null;
     }
 
     private List<DbPair> parsePairList(ResultSet result) {
@@ -440,6 +442,94 @@ public class DatabaseCommunication {
             pair.setFormed(true);
         }
         return result;
+    }
+
+    //----------------------- GAMES TABLE ---------------------
+    public boolean createGame(DbPlayer player1, DbPlayer player2) {
+        String sql = "INSERT INTO " + Constants.GAMES_TABLE + " (" + Constants.PLAYER1_ID
+                + ", " + Constants.PLAYER2_ID + ", " + Constants.ENDED + ") VALUES ("
+                + player1.getId() + ", " + player2.getId() + ", 0);";
+
+        return execute(sql);
+    }
+
+    public DbGame getUnfinishedGameForPlayers(DbPlayer player1, DbPlayer player2) throws GameNotFoundException {
+        String query = "SELECT * FROM " + Constants.GAMES_TABLE + " WHERE (("
+                + Constants.PLAYER1_ID + " = '" + player1.getId() + "' AND "
+                + Constants.PLAYER2_ID + " = '" + player2.getId() + "') OR ("
+                + Constants.PLAYER1_ID + " = '" + player2.getId() + "' AND "
+                + Constants.PLAYER2_ID + " = '" + player1.getId() + "')) AND "
+                + Constants.ENDED + " = '0';";
+
+        ResultSet result = executeQuery(query);
+
+        return parseGame(result);
+    }
+
+    public List<DbGame> getAllGamesForPlayer(DbPlayer player) {
+        String query = "SELECT * FROM " + Constants.GAMES_TABLE + " WHERE "
+                + Constants.PLAYER1_ID + " = '" + player.getId() + "' OR "
+                + Constants.PLAYER2_ID + " = '" + player.getId() + "';";
+        ResultSet result = executeQuery(query);
+
+        return parseGameList(result);
+    }
+
+    public boolean finishGame(DbGame game) {
+        String sql = "UPDATE " + Constants.GAMES_TABLE + " SET "
+                + Constants.WINNER_ID + " = '" + game.getWinnerId() + "', "
+                + Constants.ENDED + " = '1';";
+
+        return execute(sql);
+    }
+
+    private DbGame parseGame(ResultSet result) throws GameNotFoundException {
+        if (result != null) {
+            try {
+                if (result.next()) {
+//                    int winnerId = result.getInt(Constants.WINNER_ID);
+//                    if (result.wasNull()) {
+//                        winnerId = DbPlayer.INVALID_ID;
+//                    }
+                    return new DbGame(result.getInt(Constants.PLAYER1_ID),
+                            result.getInt(Constants.PLAYER2_ID),
+                            result.getInt(Constants.WINNER_ID),
+                            result.getInt(Constants.ENDED) == 1,
+                            result.getInt(Constants.ID));
+                } else {
+                    throw new GameNotFoundException();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new GameNotFoundException();
+            }
+        } else {
+            throw new GameNotFoundException();
+        }
+    }
+
+    private List<DbGame> parseGameList(ResultSet result) {
+        List<DbGame> gameList = new ArrayList<>();
+
+        if (result != null) {
+            try {
+                while (result.next()) {
+//                    int winnerId = result.getInt(Constants.WINNER_ID);
+//                    if (result.wasNull()) {
+//                        winnerId = DbPlayer.INVALID_ID;
+//                    }
+                    gameList.add(new DbGame(result.getInt(Constants.PLAYER1_ID),
+                            result.getInt(Constants.PLAYER2_ID),
+                            result.getInt(Constants.WINNER_ID),
+                            result.getInt(Constants.ENDED) == 1,
+                            result.getInt(Constants.ID)));
+                }
+            } catch (SQLException e) {
+                System.err.println("Error parsing game list: " + e);
+            }
+        }
+
+        return gameList;
     }
 
     //---------------------- OTHER METHODS --------------------

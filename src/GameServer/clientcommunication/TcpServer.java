@@ -4,6 +4,7 @@
 
 package GameServer.clientcommunication;
 
+import CommunicationCommons.GameCommConstants;
 import CommunicationCommons.PlayerLogin;
 import DatabaseCommunication.DatabaseCommunication;
 import DatabaseCommunication.exceptions.PairNotFoundException;
@@ -29,7 +30,7 @@ public class TcpServer implements Runnable {
     private static final String DATABASE_USER_NAME = "GameServer";
     private static final String DATABASE_PASSWORD = "ThreeInRow_1718";
 
-    private static final Object LOCK = new Object();
+    private final Object LOCK = new Object();
 
     private List<Client> clientList;
     private ServerSocket serverSocket;
@@ -80,7 +81,7 @@ public class TcpServer implements Runnable {
                 Client clients[] = new Client[2];
                 clients[0] = clientList.get(pairIndex);
                 clients[1] = newClient;
-                GameInstance gameInstance = new GameInstance(clients, database);
+                GameInstance gameInstance = new GameInstance(clients, database, this);
                 Thread gameThread = new Thread(gameInstance);
                 gameThread.start();
 
@@ -103,7 +104,7 @@ public class TcpServer implements Runnable {
 //        }
     }
 
-    public void removeClientFromList(int playerId) throws ClientNotFoundException {
+    public void removeClientFromList(int playerId) {
         synchronized (LOCK) {
             for (int i = 0; i < clientList.size(); i++) {
                 if (clientList.get(i).getDbPlayer().getId() == playerId) {
@@ -111,14 +112,12 @@ public class TcpServer implements Runnable {
                     return;
                 }
             }
-
-            throw new ClientNotFoundException();
         }
     }
 
     private void sendConnectionRefused(Socket cliSocket) throws IOException {
         ObjectOutputStream out = new ObjectOutputStream(cliSocket.getOutputStream());
-        out.writeObject(-1);
+        out.writeObject(GameCommConstants.CONNECTION_REFUSED);
         out.flush();
         cliSocket.close();
     }
@@ -157,6 +156,9 @@ public class TcpServer implements Runnable {
 
                         Client client = new Client(dbPlayer, currentPairId, cliSocket,
                                 ois, new ObjectOutputStream(cliSocket.getOutputStream()));
+
+                        client.getOos().writeObject(GameCommConstants.CONNECTION_ACCEPTED);
+                        client.getOos().flush();
 
                         addClientToList(client);
 
