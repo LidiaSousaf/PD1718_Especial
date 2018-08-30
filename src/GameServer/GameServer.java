@@ -13,6 +13,8 @@ public class GameServer {
 
     private static final String MANAGEMENT_ADDRESS = "localhost";
 
+    public static boolean stopThreads = false;
+
     public static void main(String args[]) {
         String managementServerAddr = MANAGEMENT_ADDRESS;
         if (args.length >= 1) {
@@ -35,7 +37,8 @@ public class GameServer {
             System.out.println("Press \"Enter\" to exit.");
             System.in.read();
 
-            heartbeatHandler.setStop(true);
+//            heartbeatHandler.setStop(true);
+            stopThreads = true;
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);

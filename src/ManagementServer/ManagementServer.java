@@ -13,10 +13,10 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class ManagementServer {
-    private final static String DATABASE_NAME = "three_in_row";
-    private final static String DATABASE_USER_NAME = "ManagementServer";
-    private final static String DATABASE_PASSWORD = "ThreeInRow_1718";
-    private final static String DATABASE_ADDRESS = "localhost";
+    private static final String DATABASE_NAME = "three_in_row";
+    private static final String DATABASE_USER_NAME = "ManagementServer";
+    private static final String DATABASE_PASSWORD = "ThreeInRow_1718";
+    private static final String DATABASE_ADDRESS = "localhost";
 
     public static void main(String[] args) {
         //Get the Ip address for the database

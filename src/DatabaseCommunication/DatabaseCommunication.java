@@ -198,12 +198,13 @@ public class DatabaseCommunication {
 
         DbPlayer playerInDb = getPlayerByUserName(player.getUserName());
 
+        if (!playerInDb.getUserName().equals(player.getUserName())) {
+            throw new PlayerNotFoundException();
+        }
+
         if (playerInDb.isLogged()) {
             throw new AlreadyLoggedInException();
         }
-
-//        System.out.println("playerInDbPassword: " + playerInDb.getPassword());
-//        System.out.println("playerPassword: " + player.getPassword());
 
         if (playerInDb.getPassword().equals(player.getPassword())) {
 
@@ -288,6 +289,17 @@ public class DatabaseCommunication {
         ResultSet result = executeQuery(query);
 
         return parsePairList(result).size() > 0;
+    }
+
+    public DbPair getCurrentPairForPlayer(DbPlayer player) throws PairNotFoundException {
+        String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE (" +
+                Constants.PLAYER1_ID + " = '" + player.getId() + "' OR " +
+                Constants.PLAYER2_ID + " = '" + player.getId() + "') AND " +
+                Constants.FORMED + " = '1';";
+
+        ResultSet result = executeQuery(query);
+
+        return parsePair(result);
     }
 
     public DbPair getPairForPlayers(DbPlayer player1, DbPlayer player2) throws PairNotFoundException {
@@ -375,21 +387,21 @@ public class DatabaseCommunication {
         return pairList;
     }
 
-    public boolean deleteAllPairsForPlayer(DbPlayer player){
+    public boolean deleteAllPairsForPlayer(DbPlayer player) {
         String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
                 + Constants.PLAYER1_ID + " = '" + player.getId() + "' OR "
                 + Constants.PLAYER2_ID + "='" + player.getId() + "';";
         return execute(sql);
     }
 
-    public boolean deletePendingPairsForPlayer1(DbPlayer player1){
+    public boolean deletePendingPairsForPlayer1(DbPlayer player1) {
         String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
                 + Constants.PLAYER1_ID + " = '" + player1.getId() + "' AND "
                 + Constants.FORMED + "='0';";
         return execute(sql);
     }
 
-    public boolean deletePendingPairsForPlayer2(DbPlayer player2){
+    public boolean deletePendingPairsForPlayer2(DbPlayer player2) {
         String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
                 + Constants.PLAYER2_ID + " = '" + player2.getId() + "' AND "
                 + Constants.FORMED + "='0';";
