@@ -1,5 +1,5 @@
 
-package GameServer.game.files;
+package GameLogic.three_in_row.files;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,39 +8,43 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-/**
+/** 
  * @author Jose Marinho
+ *
  */
 
-public class FileUtility {
+public class FileUtility
+{
     public static final String FILE_TO_SAVE_GAME = "savedgame.bin";
 
     public static final String FILE_PATH = "../saved_games";
-
-    public static void saveGameToFile(File file, Object o) throws IOException {
+            
+    public static void saveGameToFile(File file, Object o) throws IOException
+    {
         ObjectOutputStream oout = null;
 
-        try {
+        try{
 
-            oout = new ObjectOutputStream(new FileOutputStream(file));
+            oout = new ObjectOutputStream(new FileOutputStream(file));        
             oout.writeObject(o);
 
-        } finally {
-            if (oout != null)
+        }finally{
+            if(oout != null)
                 oout.close();
         }
     }
 
-    public static Object retrieveGameFromFile(File file) throws IOException, ClassNotFoundException {
+    public static Object retrieveGameFromFile(File file) throws IOException, ClassNotFoundException
+    {
         ObjectInputStream oin = null;
 
-        try {
+        try{
 
-            oin = new ObjectInputStream(new FileInputStream(file));
+            oin = new ObjectInputStream(new FileInputStream(file));        
             return oin.readObject();
 
-        } finally {
-            if (oin != null)
+        }finally{
+            if(oin != null)
                 oin.close();
         }
     }
@@ -49,5 +53,5 @@ public class FileUtility {
         File file = new File(filePath);
         return file.delete();
     }
-
+    
 }

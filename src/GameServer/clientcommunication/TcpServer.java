@@ -20,6 +20,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class TcpServer implements Runnable {
                 DATABASE_USER_NAME, DATABASE_PASSWORD, databaseIp);
         try {
             serverSocket = new ServerSocket(TCP_PORT);
+            serverSocket.setSoTimeout(GameCommConstants.SOCKET_TIMEOUT);
         } catch (IOException e) {
             System.err.println("Error: Failed to create server socket: " + e);
             GameServer.stopThreads = true;
@@ -134,6 +136,7 @@ public class TcpServer implements Runnable {
         while (!GameServer.stopThreads) {
             try {
                 Socket cliSocket = serverSocket.accept();
+                cliSocket.setSoTimeout(GameCommConstants.SOCKET_TIMEOUT);
 
                 System.out.println("Received connection request from " +
                         cliSocket.getInetAddress().getHostAddress() +
@@ -176,7 +179,8 @@ public class TcpServer implements Runnable {
                     System.err.println("Error receiving client request: " + e);
                     cliSocket.close();
                 }
-
+            } catch (SocketTimeoutException e) {
+                //Make sure the server doesn't get indefinitely stuck in the loop
             } catch (IOException e) {
                 System.err.println("TCP socket error: " + e);
                 GameServer.stopThreads = true;

@@ -1,7 +1,7 @@
-package GameServer.game.logic.states;
+package GameLogic.three_in_row.logic.states;
 
-import GameServer.game.logic.Constants;
-import GameServer.game.logic.GameData;
+import GameLogic.three_in_row.logic.Constants;
+import GameLogic.three_in_row.logic.GameData;
 
 public class StateAdapter implements IStates, Constants
 {

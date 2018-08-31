@@ -1,8 +1,8 @@
-package GameServer.game.logic.states;
+package GameLogic.three_in_row.logic.states;
 
-import GameServer.game.logic.GameData;
-import GameServer.game.logic.Player;
-import GameServer.game.logic.Token;
+import GameLogic.three_in_row.logic.GameData;
+import GameLogic.three_in_row.logic.Player;
+import GameLogic.three_in_row.logic.Token;
 
 public class AwaitPlacement extends StateAdapter
 {

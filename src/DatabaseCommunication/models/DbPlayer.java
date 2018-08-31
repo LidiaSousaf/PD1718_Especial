@@ -4,12 +4,9 @@
 
 package DatabaseCommunication.models;
 
-import java.io.Serializable;
-
-public class DbPlayer implements Serializable {
+public class DbPlayer {
 
     //------------------------ CONSTANTS ----------------------
-    public static final Long serialVersionUID = 10L;
     public static final int INVALID_ID = -1;
 
     //------------------------ VARIABLES ----------------------

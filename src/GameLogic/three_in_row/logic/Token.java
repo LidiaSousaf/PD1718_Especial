@@ -1,4 +1,4 @@
-package GameServer.game.logic;
+package GameLogic.three_in_row.logic;
 
 import java.io.Serializable;
 

@@ -1,157 +1,150 @@
 
-package GameServer.game.logic;
+package GameLogic.three_in_row.logic;
 
-import GameServer.game.logic.states.IStates;
+import GameLogic.three_in_row.logic.states.IStates;
 
 import java.util.Observable;
 
-/** 
+/**
  * @author Jose Marinho
- *
  */
 
-public class ObservableGame extends Observable
-{
+public class ObservableGame extends Observable {
     GameModel gameModel;
-    
-    public ObservableGame()
-    {
+
+    public ObservableGame() {
         gameModel = new GameModel();
+
+        //EXTRA LOGIC
     }
 
-    public GameModel getGameModel()
-    {
+    public GameModel getGameModel() {
         return gameModel;
     }
 
-    public void setGameModel(GameModel gameModel)
-    {        
+    public void setGameModel(GameModel gameModel) {
         this.gameModel = gameModel;
-        
+
         setChanged();
         notifyObservers();
-    }   
-    
+    }
+
     public GameData getGameData() {
         return gameModel.getGameData();
     }
 
-    public IStates getState()
-    {
+    public IStates getState() {
         return gameModel.getState();
-    }        
-    
-     // Methods retrieve data from the game
-    
-    public String gridToString()
-    {
-        return gameModel.gridToString();
-    }                    
+    }
 
-    public int getNumPlayers()
-    {
+    // Methods retrieve data from the game
+
+    public String gridToString() {
+        return gameModel.gridToString();
+    }
+
+    public int getNumPlayers() {
         return gameModel.getNumPlayers();
     }
-    
-    public Player getCurrentPlayer() 
-    {
+
+    public Player getCurrentPlayer() {
         return gameModel.getCurrentPlayer();
     }
 
-    public Player getNotCurrentPlayer() 
-    {
+    public Player getNotCurrentPlayer() {
         return gameModel.getNotCurrentPlayer();
     }
-    
-    public Player getPlayer1()
-    {
+
+    public Player getPlayer1() {
         return gameModel.getPlayer1();
     }
 
-    public Player getPlayer2()
-    {
+    public Player getPlayer2() {
         return gameModel.getPlayer2();
     }
 
-    public Token getToken(int line, int column) 
-    {
+    public Token getToken(int line, int column) {
         return gameModel.getToken(line, column);
     }
-    
-    public String grelhaToString()
-    {
+
+    public String grelhaToString() {
         return gameModel.gridToString();
     }
 
-    public int getNumCurrentPlayer()
-    {
+    public int getNumCurrentPlayer() {
         return gameModel.getNumCurrentPlayer();
     }
 
-    public String getCurrentPlayerName()
-    {
+    public String getCurrentPlayerName() {
         return gameModel.getCurrentPlayerName();
     }
-    
-    public boolean isOver() 
-    {
+
+    public boolean isOver() {
         return gameModel.isOver();
     }
-    
-    public boolean hasWon(Player player) 
-    {
+
+    public boolean hasWon(Player player) {
         return gameModel.hasWon(player);
     }
-    
+
     // Methods that are intended to be used by the user interfaces and that are delegated in the current state of the finite state machine 
-    
-    public void setNumberPlayers(int num)
-    {
+
+    public void setNumberPlayers(int num) {
         gameModel.setNumberPlayers(num);
-        
+
         setChanged();
         notifyObservers();
     }
 
-    public void setPlayerName(int num, String name) 
-    {
+    public void setPlayerName(int num, String name) {
         gameModel.setPlayerName(num, name);
-        
+
         setChanged();
         notifyObservers();
     }
 
-    public void startGame()
-    {
+    public void startGame() {
+        gameModel.setInterrupted(false);
+
         gameModel.startGame();
-        
+
         setChanged();
         notifyObservers();
     }
 
-    public void placeToken(int line, int column)
-    {
+    public void placeToken(int line, int column) {
         gameModel.placeToken(line, column);
-        
+
         setChanged();
         notifyObservers();
     }
 
-    public void returnToken(int line, int column)
-    {
+    public void returnToken(int line, int column) {
         gameModel.returnToken(line, column);
-        
+
         setChanged();
         notifyObservers();
     }
 
-    public void quit()
-    {
+    public void quit() {
         gameModel.quit();
-        
+
         setChanged();
         notifyObservers();
     }
 
+    //EXTRA LOGIC
+    public boolean isInterrupted() {
+        return gameModel.isInterrupted();
+    }
 
+    public void setInterrupted(boolean interrupted) {
+        gameModel.setInterrupted(interrupted);
+        setChanged();
+        notifyObservers();
+    }
+
+    public int getWinnerIndex() {
+        return gameModel.getWinnerIndex();
+    }
 }

@@ -4,11 +4,8 @@
 
 package DatabaseCommunication.models;
 
-import java.io.Serializable;
-
-public class DbGame implements Serializable {
+public class DbGame {
     //------------------------ CONSTANTS ----------------------
-    public static final Long serialVersionUID = 2L;
     public static final int INVALID_ID = -1;
 
     //------------------------ VARIABLES ----------------------

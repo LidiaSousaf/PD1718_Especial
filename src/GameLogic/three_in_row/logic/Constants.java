@@ -1,4 +1,4 @@
-package GameServer.game.logic;
+package GameLogic.three_in_row.logic;
 
 public interface Constants {
     public static final int DIM = 3;

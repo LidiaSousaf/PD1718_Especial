@@ -4,18 +4,23 @@
 
 package GameServer.clientcommunication;
 
+import CommunicationCommons.GameCommConstants;
+import CommunicationCommons.GameMove;
 import CommunicationCommons.remoteexceptions.GameNotFoundRemoteException;
 import DatabaseCommunication.DatabaseCommunication;
 import DatabaseCommunication.exceptions.GameNotFoundException;
 import DatabaseCommunication.models.DbGame;
+import GameLogic.three_in_row.logic.states.AwaitPlacement;
 import GameServer.GameServer;
-import GameServer.game.files.FileUtility;
-import GameServer.game.logic.GameModel;
-import GameServer.game.logic.ObservableGame;
-import GameServer.game.logic.states.AwaitBeginning;
+import GameLogic.three_in_row.files.FileUtility;
+import GameLogic.three_in_row.logic.GameModel;
+import GameLogic.three_in_row.logic.ObservableGame;
+import GameLogic.three_in_row.logic.states.AwaitBeginning;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -51,8 +56,6 @@ public class GameInstance implements Runnable, Observer {
 
             game.addObserver(this);
 
-            updatePlayers(); //send the initial state of the game to the players
-
             String str = "--> _STATE_ game between players \"_PLAYER1_\" and \"_PLAYER2_\" <--";
             String state = game.getState() instanceof AwaitBeginning ? "Beginning" : "Resuming";
             str = str.replace("_STATE_", state)
@@ -63,7 +66,7 @@ public class GameInstance implements Runnable, Observer {
             game.startGame();
         } catch (GameNotFoundException e) {
             //notify the players that something went wrong
-            updatePlayers(new GameNotFoundRemoteException());
+            sendError(new GameNotFoundRemoteException());
             stopThread = true;
         }
     }
@@ -128,14 +131,44 @@ public class GameInstance implements Runnable, Observer {
         }
     }
 
+    //------------------------------ RUN METHOD ---------------------------
     @Override
     public void run() {
-        startGame();
+        try {
+            players[0].getSocket().setSoTimeout(GameCommConstants.SOCKET_TIMEOUT);
+            players[1].getSocket().setSoTimeout(GameCommConstants.SOCKET_TIMEOUT);
+
+            startGame();
+        } catch (SocketException e) {
+            System.err.println("Error setting players sockets timeout: " + e);
+            sendError(GameCommConstants.CONNECTION_REFUSED);
+            stopThread = true;
+        }
 
         while (!stopThread && !GameServer.stopThreads) {
             synchronized (LOCK) {
-                //TODO: retrieve commands from each player in its respective turn
-                //TODO: update ObservableGame accordingly
+                //retrieve moves from each player in its respective turn
+                //update ObservableGame accordingly
+                int pIndex = game.getNumCurrentPlayer() - 1; //index of the current player, managed by the game logic
+                try {
+                    Object o = players[pIndex].getOis().readObject();
+                    if (o instanceof GameMove) { //expect to receive a GameMove from the player
+                        GameMove move = (GameMove) o;
+                        handleGameMove(move);
+                    }
+                } catch (ClassNotFoundException e) {
+                    System.err.println("Error - received unknown object: " + e);
+                } catch (SocketTimeoutException e) {
+                    //Make sure the thread doesn't get indefinitely stuck in the loop
+                } catch (SocketException e) {
+                    System.err.println("TCP socket error in game instance: " + e);
+                    stopThread = true;
+                    sendError(GameCommConstants.INTERRUPT);
+                } catch (IOException e) {
+                    System.err.println("IOException in game instance: " + e);
+                    stopThread = true;
+                    sendError(GameCommConstants.INTERRUPT);
+                }
             }
         }
 
@@ -145,13 +178,51 @@ public class GameInstance implements Runnable, Observer {
         closeSockets();
     }
 
+    //------------------------ GAME MANAGEMENT METHODS --------------------
+    private void handleGameMove(GameMove move) {
+        Integer action = move.getAction();
+        if (action.equals(GameCommConstants.MAKE_MOVE)) {
+            if (game.getState() instanceof AwaitPlacement) {
+                game.placeToken(move.getRow(), move.getRow());
+            } else {
+                game.returnToken(move.getRow(), move.getCol());
+            }
+        } else if (action.equals(GameCommConstants.INTERRUPT)) {
+            game.setInterrupted(true);
+        } else if (action.equals(GameCommConstants.GIVE_UP)) {
+            game.quit();
+        }
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         saveGameProgress();
         updatePlayers();
-        //TODO: decide what to send to game clients
-        //TODO: send updates to players
-        //TODO: check for game end, update the database and delete the progress file
+
+        if (game.isInterrupted()) { //game was interrupted by order of one of the players
+            System.out.println("--> Game between players \"" + players[0].getDbPlayer().getUserName() +
+                    "\" and \"" + players[1].getDbPlayer().getUserName() + "\" was interrupted. <--");
+            stopThread = true;
+
+        } else if (game.isOver()) { //game was effectively concluded
+            int winnerIndex = game.getWinnerIndex();
+
+            System.out.println("--> Game between players \"" + players[0].getDbPlayer().getUserName() +
+                    "\" and \"" + players[1].getDbPlayer().getUserName() + "\" ended. <--");
+            System.out.println("---> The Winner was "
+                    + players[winnerIndex].getDbPlayer().getUserName()
+                    + "! <---");
+
+            //set game as ended in the database
+            dbGame.setEnded(true);
+            dbGame.setWinnerId(players[winnerIndex].getDbPlayer().getId());
+            database.finishGame(dbGame);
+
+            //delete the game progress file
+            deleteGameProgress();
+
+            stopThread = true;
+        }
     }
 
     //----------------------- SOCKET RELATED METHODS ----------------------
@@ -172,19 +243,28 @@ public class GameInstance implements Runnable, Observer {
         }
     }
 
+    //send the game model by default
     private void updatePlayers() {
-
+        for (int i = 0; i < 2; i++) {
+            try {
+                players[i].getOos().writeObject(game.getGameModel());
+                players[i].getOos().flush();
+            } catch (IOException e) {
+                System.err.println("Error sending game update to player: " + e);
+            }
+        }
     }
 
-    private void updatePlayers(Object data) {
-        try {
-            for (int i = 0; i < 2; ++i) {
+    private void sendError(Object data) {
+        for (int i = 0; i < 2; i++) {
+            try {
                 players[i].getOos().writeObject(data);
                 players[i].getOos().flush();
+            } catch (IOException e) {
+                System.err.println("Error sending data to player: " + e);
             }
-        } catch (IOException e) {
-            System.err.println("Error sending data to player: " + e);
         }
+
     }
 
     //------------------------ FILE RELATED METHODS -----------------------

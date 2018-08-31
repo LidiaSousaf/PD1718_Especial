@@ -4,11 +4,7 @@
 
 package DatabaseCommunication.models;
 
-import java.io.Serializable;
-
-public class DbPair implements Serializable {
-    //------------------------ CONSTANTS ----------------------
-    public static final Long serialVersionUID = 4L;
+public class DbPair {
 
     //------------------------ VARIABLES ----------------------
     private int player1Id;
