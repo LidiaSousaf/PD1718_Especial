@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public interface IStates extends Serializable
 {
+    public static final long serialVersionUID = 10L;
+
    IStates setNumberPlayers(int num);
    IStates setName(int num, String name);
    IStates startGame();

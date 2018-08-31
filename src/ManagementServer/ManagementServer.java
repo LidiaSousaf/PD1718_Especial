@@ -50,7 +50,7 @@ public class ManagementServer {
             System.exit(-1);
         } finally {
             databaseCommunication.closeConnection();
-            System.out.println("Database connection ended.\nManagement Server terminated.");
+            System.out.println("Database connection ended.");
         }
     }
 

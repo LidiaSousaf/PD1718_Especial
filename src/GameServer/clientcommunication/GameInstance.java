@@ -24,7 +24,7 @@ import java.net.SocketTimeoutException;
 import java.util.Observable;
 import java.util.Observer;
 
-public class GameInstance implements Runnable, Observer {
+public class GameInstance implements Runnable/*, Observer*/ {
 
     //----------------------------- CONSTANTS -----------------------------
     private final Object LOCK = new Object();
@@ -54,7 +54,7 @@ public class GameInstance implements Runnable, Observer {
 
             gameProgressFile = getProgressFile();
 
-            game.addObserver(this);
+//            game.addObserver(this);
 
             String str = "--> _STATE_ game between players \"_PLAYER1_\" and \"_PLAYER2_\" <--";
             String state = game.getState() instanceof AwaitBeginning ? "Beginning" : "Resuming";
@@ -64,6 +64,7 @@ public class GameInstance implements Runnable, Observer {
             System.out.println(str);
 
             game.startGame();
+            update();
         } catch (GameNotFoundException e) {
             //notify the players that something went wrong
             sendError(new GameNotFoundRemoteException());
@@ -145,16 +146,20 @@ public class GameInstance implements Runnable, Observer {
             stopThread = true;
         }
 
+        System.out.println("Player1: " + game.getPlayer1().getName() + ", Player2: " + game.getPlayer2().getName());
+
         while (!stopThread && !GameServer.stopThreads) {
-            synchronized (LOCK) {
+//            synchronized (LOCK) {
                 //retrieve moves from each player in its respective turn
                 //update ObservableGame accordingly
                 int pIndex = game.getNumCurrentPlayer() - 1; //index of the current player, managed by the game logic
 
                 try {
+//                    System.out.println(game.getCurrentPlayer().getName());
                     //expect to receive a GameMove from the player
                     GameMove move = (GameMove) players[pIndex].getOis().readObject();
                     handleGameMove(move);
+                    update();
 
                 } catch (ClassNotFoundException e) {
                     System.err.println("Error - received unknown object: " + e);
@@ -169,7 +174,7 @@ public class GameInstance implements Runnable, Observer {
                     stopThread = true;
                     sendError(GameCommConstants.INTERRUPT);
                 }
-            }
+//            }
         }
 
         //remove the client references from the TcpServer
@@ -183,10 +188,11 @@ public class GameInstance implements Runnable, Observer {
         Integer action = move.getAction();
         if (action.equals(GameCommConstants.MAKE_MOVE)) {
             if (game.getState() instanceof AwaitPlacement) {
-                game.placeToken(move.getRow(), move.getRow());
+                game.placeToken(move.getRow(), move.getCol());
             } else {
                 game.returnToken(move.getRow(), move.getCol());
             }
+            System.out.println("New move made: " + move.getRow() + ", " + move.getCol());
         } else if (action.equals(GameCommConstants.INTERRUPT)) {
             game.setInterrupted(true);
         } else if (action.equals(GameCommConstants.GIVE_UP)) {
@@ -194,8 +200,9 @@ public class GameInstance implements Runnable, Observer {
         }
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
+//    @Override
+//    public void update(Observable o, Object arg) {
+    public void update(){
         saveGameProgress();
         updatePlayers();
 
@@ -247,8 +254,12 @@ public class GameInstance implements Runnable, Observer {
     private void updatePlayers() {
         for (int i = 0; i < 2; i++) {
             try {
+                System.out.println("Sending game model to player " + i);
+                System.out.println("Current player: " + game.getCurrentPlayerName());
+                players[i].getOos().reset();
                 players[i].getOos().writeObject(game.getGameModel());
                 players[i].getOos().flush();
+                System.out.println("Game model was sent");
             } catch (IOException e) {
                 System.err.println("Error sending game update to player: " + e);
             }

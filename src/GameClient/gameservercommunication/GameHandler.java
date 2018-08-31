@@ -6,6 +6,7 @@ package GameClient.gameservercommunication;
 
 import CommunicationCommons.GameCommConstants;
 import CommunicationCommons.GameMove;
+import CommunicationCommons.remoteexceptions.GameNotFoundRemoteException;
 import GameClient.GlobalController;
 import GameLogic.three_in_row.logic.GameModel;
 import GameLogic.three_in_row.logic.ObservableGame;
@@ -14,7 +15,9 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class GameHandler implements Runnable {
 
@@ -42,7 +45,9 @@ public class GameHandler implements Runnable {
     //---------------------------- START METHODS --------------------------
     private void initializeSocket() {
         try {
-            socket = new Socket(gameServerIp, GameCommConstants.TCP_PORT);
+            InetAddress gameServerAddr = InetAddress.getByName(gameServerIp);
+            System.out.println(gameServerIp);
+            socket = new Socket(gameServerAddr, GameCommConstants.TCP_PORT);
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
             socket.setSoTimeout(GameCommConstants.SOCKET_TIMEOUT);
@@ -85,6 +90,11 @@ public class GameHandler implements Runnable {
             Object data = ois.readObject();
             if (data instanceof GameModel) {
                 updateGameModel((GameModel) data);
+            } else if(data instanceof GameNotFoundRemoteException){
+                JOptionPane.showMessageDialog(null,
+                        "O servidor de jogo não conseguiu comunicar com a base de dados.");
+                game.setInterrupted(true);
+                stopThread = true;
             } else {//assume that the server sent some error code
                 JOptionPane.showMessageDialog(null, "Recebido erro do servidor de jogo.");
                 game.setInterrupted(true);
@@ -92,6 +102,8 @@ public class GameHandler implements Runnable {
             }
         } catch (ClassNotFoundException e) {
             System.err.println("Recebido objeto desconhecido do servidor de jogo: " + e);
+        } catch (SocketTimeoutException e) {
+            //Make sure the thread doesn't get stuck trying to read from the socket
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,
                     "Ocorreu um erro ao receber dados do servidor de jogo: " + e.getMessage());
@@ -105,6 +117,9 @@ public class GameHandler implements Runnable {
         synchronized (LOCK) {
             game.setGameModel(gameModel);
 
+            System.out.println("New game model received:");
+            System.out.println("Player1: " + gameModel.getPlayer1().getName() + ", Player2: " + gameModel.getPlayer2().getName());
+            System.out.println("Current player: " + gameModel.getCurrentPlayerName());
             if (game.isInterrupted() || game.isOver()) {
                 //game ended
                 stopThread = true;
@@ -127,7 +142,10 @@ public class GameHandler implements Runnable {
     @Override
     public void run() {
         initializeSocket();
-        startGame();
+
+        if (!stopThread) {
+            startGame();
+        }
 
         while (!stopThread) {
             receiveData();

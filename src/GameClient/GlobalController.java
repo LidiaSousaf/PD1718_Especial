@@ -281,9 +281,17 @@ public class GlobalController extends Observable {
         if (pairRequest != null && pairRequest.isFormed()) {
             String gameServerIp = getGameServerIp();
             if (gameServerIp != null) {
-                Thread gameThread = new Thread(new GameHandler(this, gameServerIp));
+                gameHandler = new GameHandler(this, gameServerIp);
+                Thread gameThread = new Thread(gameHandler);
                 gameThread.start();
             }
+        }
+    }
+
+    public void sendMove(GameMove move) {
+        if (gameHandler != null && !game.isInterrupted() && !game.isOver()) {
+            gameHandler.sendMove(move);
+            System.out.println("Sending move: action=" + move.getAction() + ", row=" + move.getRow() + ", col=" + move.getCol());
         }
     }
 

@@ -135,12 +135,12 @@ public class TcpServer implements Runnable {
         while (!GameServer.stopThreads) {
             try {
                 Socket cliSocket = serverSocket.accept();
-                cliSocket.setSoTimeout(GameCommConstants.SOCKET_TIMEOUT);
 
                 System.out.println("Received connection request from " +
                         cliSocket.getInetAddress().getHostAddress() +
                         ":" + cliSocket.getPort());
 
+                ObjectOutputStream oos = new ObjectOutputStream(cliSocket.getOutputStream());
                 ObjectInputStream ois = new ObjectInputStream(cliSocket.getInputStream());
                 PlayerLogin login = null;
                 try {
@@ -157,7 +157,7 @@ public class TcpServer implements Runnable {
                         System.out.println("> New client accepted -> userName: " + login.getUserName());
 
                         Client client = new Client(dbPlayer, currentPairId, cliSocket,
-                                ois, new ObjectOutputStream(cliSocket.getOutputStream()));
+                                ois, oos);
 
                         client.getOos().writeObject(GameCommConstants.CONNECTION_ACCEPTED);
                         client.getOos().flush();
@@ -180,6 +180,7 @@ public class TcpServer implements Runnable {
                 }
             } catch (SocketTimeoutException e) {
                 //Make sure the server doesn't get indefinitely stuck in the loop
+//                System.err.println("TCP socket error: " + e);
             } catch (IOException e) {
                 System.err.println("TCP socket error: " + e);
                 GameServer.stopThreads = true;

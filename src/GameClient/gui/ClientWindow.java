@@ -75,9 +75,10 @@ public class ClientWindow extends JFrame implements Observer {
                 add(startupPanel, BorderLayout.CENTER);
             }
 
-            repaint();
-            revalidate();
+
         }
 
+        repaint();
+        revalidate();
     }
 }

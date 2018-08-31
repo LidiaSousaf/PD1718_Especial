@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 
 public class GameModel implements Serializable {
+    public static final long serialVersionUID = 10L;
 
     private GameData gameData;
     private IStates state;

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player implements Constants, Serializable {
+    public static final long serialVersionUID = 10L;
 
     private GameData game;
     private String name;

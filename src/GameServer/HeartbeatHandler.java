@@ -74,7 +74,7 @@ public class HeartbeatHandler extends Thread {
                 if (databaseIp == null) {
                     databaseIp = tempIp;
 //                    connectToDatabase();
-//                    launchTcpServer();
+                    launchTcpServer();
                 }
                 try {
                     Thread.sleep(Heartbeat.TIME);
@@ -83,7 +83,7 @@ public class HeartbeatHandler extends Thread {
                 }
             } catch (RemoteException e) {
 //                e.printStackTrace();
-                System.err.println("Communication to Management Server failed.\nShutting down Game Server.");
+                System.err.println("Communication to Management Server failed.");
                 GameServer.stopThreads = true;
                 break;
             }

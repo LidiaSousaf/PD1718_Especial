@@ -5,6 +5,7 @@
 package GameClient.gui;
 
 import GameClient.GlobalController;
+import GameClient.gui.gameui.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +31,7 @@ public class ThreeInRowPanel extends JPanel implements Observer {
 
     private void createComponents() {
         updatesPanel = new CallbackUpdatesPanel(controller);
-        gamePanel = new GamePanel();
+        gamePanel = new GamePanel(controller);
     }
 
     private void setUpLayout() {

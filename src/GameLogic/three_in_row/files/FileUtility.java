@@ -17,7 +17,7 @@ public class FileUtility
 {
     public static final String FILE_TO_SAVE_GAME = "savedgame.bin";
 
-    public static final String FILE_PATH = "../saved_games";
+    public static final String FILE_PATH = "./saved_games";
             
     public static void saveGameToFile(File file, Object o) throws IOException
     {

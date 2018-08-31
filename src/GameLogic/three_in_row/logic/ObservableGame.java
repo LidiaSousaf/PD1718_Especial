@@ -15,7 +15,6 @@ public class ObservableGame extends Observable {
     public ObservableGame() {
         gameModel = new GameModel();
 
-        //EXTRA LOGIC
     }
 
     public GameModel getGameModel() {

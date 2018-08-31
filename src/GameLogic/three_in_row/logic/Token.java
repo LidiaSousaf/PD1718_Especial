@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Token implements Serializable
 {
+    public static final long serialVersionUID = 10L;
     
     private Player player;
 

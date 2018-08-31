@@ -23,6 +23,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     public ClientManagementService(DatabaseCommunication databaseCommunication, HeartbeatService heartbeatService)
             throws RemoteException {
         this.databaseCommunication = databaseCommunication;
+//        this.databaseCommunication.deleteAllGames();
         this.databaseCommunication.logoutAllPlayers();
         this.databaseCommunication.deleteAllPairs();
         this.clients = new ArrayList<>();
@@ -60,7 +61,8 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         if (login.isValid()) {
             try {
                 DbPlayer player = databaseCommunication.getPlayerByUserName(login.getUserName());
-                player.setPassword(login.getPassword());
+                player.setUserName(login.getUserName()); //this is necessary because searches in database are case insensitive
+                player.setPassword(login.getPassword()); //this is necessary because searches in database are case insensitive
                 player.setIpAddress(login.getIpAddress());
                 if (databaseCommunication.login(player)) {
 

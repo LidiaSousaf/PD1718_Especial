@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameData implements Constants, Serializable {
+    public static final long serialVersionUID = 10L;
 
     private List<Player> players;
 
@@ -16,7 +17,8 @@ public class GameData implements Constants, Serializable {
     public GameData() {
         players = new ArrayList<>();
         // setState(new AwaitBeginning(this));
-        numCurrentPlayer = -1;
+//        numCurrentPlayer = -1;
+        numCurrentPlayer = 1;
         numPlayers = 2;
         players.add(new Player("A", this));
         players.add(new Player("B", this));

@@ -86,10 +86,9 @@ public class DatabaseCommunication {
     public boolean connect() {
         String connectionString = "jdbc:mysql://" + dbIpAddress + ":" + dbPort + "/"
                 + databaseName + Constants.CONNECTION_STRING_END;
-        System.out.println(connectionString);
+//        System.out.println(connectionString);
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://" + dbIpAddress + ":" + dbPort + "/"
-                    + databaseName + Constants.CONNECTION_STRING_END, dbUserName, dbPassword);
+            connection = DriverManager.getConnection(connectionString, dbUserName, dbPassword);
         } catch (SQLException e) {
 //            e.printStackTrace();
             System.err.println("Connection to database failed: " + e);
@@ -192,6 +191,12 @@ public class DatabaseCommunication {
     public boolean deletePlayer(String userName) throws PlayerNotFoundException {
         getPlayerByUserName(userName);
         String sql = "DELETE FROM " + Constants.PLAYERS_TABLE + " WHERE " + Constants.USERNAME + " = '" + userName + "';";
+        return execute(sql);
+    }
+
+    public boolean deleteAllPlayers() {
+        String sql = "DELETE FROM " + Constants.PLAYERS_TABLE + ";";
+
         return execute(sql);
     }
 
@@ -530,6 +535,12 @@ public class DatabaseCommunication {
         }
 
         return gameList;
+    }
+
+    public boolean deleteAllGames() {
+        String sql = "DELETE FROM " + Constants.GAMES_TABLE + ";";
+
+        return execute(sql);
     }
 
     //---------------------- OTHER METHODS --------------------
