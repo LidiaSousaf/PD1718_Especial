@@ -26,7 +26,6 @@ import java.util.List;
 
 public class TcpServer implements Runnable {
 
-    private static final int TCP_PORT = 6001;
     private static final String DATABASE_NAME = "three_in_row";
     private static final String DATABASE_USER_NAME = "GameServer";
     private static final String DATABASE_PASSWORD = "ThreeInRow_1718";
@@ -42,7 +41,7 @@ public class TcpServer implements Runnable {
         this.database = new DatabaseCommunication(DATABASE_NAME,
                 DATABASE_USER_NAME, DATABASE_PASSWORD, databaseIp);
         try {
-            serverSocket = new ServerSocket(TCP_PORT);
+            serverSocket = new ServerSocket(GameCommConstants.TCP_PORT);
             serverSocket.setSoTimeout(GameCommConstants.SOCKET_TIMEOUT);
         } catch (IOException e) {
             System.err.println("Error: Failed to create server socket: " + e);

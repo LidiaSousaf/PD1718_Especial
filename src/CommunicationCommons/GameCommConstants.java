@@ -8,6 +8,8 @@ public class GameCommConstants {
 
     //Constants used in the communication between GameServer and GameClient
 
+    public static final int TCP_PORT = 6001;
+
     public static final int SOCKET_TIMEOUT = 10000;
 
     public static final Integer CONNECTION_REFUSED = -1;

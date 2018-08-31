@@ -2,6 +2,8 @@ package GameClient;
 
 import CommunicationCommons.*;
 import CommunicationCommons.remoteexceptions.*;
+import GameClient.gameservercommunication.GameHandler;
+import GameLogic.three_in_row.logic.ObservableGame;
 
 import javax.swing.*;
 import java.net.InetAddress;
@@ -21,6 +23,8 @@ public class GlobalController extends Observable {
     private PlayerLogin login;
     private String playerName;
     private PairRequest pairRequest;
+    private ObservableGame game;
+    private GameHandler gameHandler;
 
     //---------------------------- CONSTRUCTOR ----------------------------
     public GlobalController(String managementAddress) {
@@ -28,6 +32,9 @@ public class GlobalController extends Observable {
         login = null;
         playerName = null;
         pairRequest = null;
+        game = new ObservableGame();
+        game.setInterrupted(true);
+        gameHandler = null;
     }
 
     //------------------------- GETTERS / SETTERS -------------------------
@@ -60,6 +67,17 @@ public class GlobalController extends Observable {
         setChanged();
         notifyObservers(pairRequest);
     }
+
+    public ObservableGame getGame() {
+        return game;
+    }
+
+//    public void setGame(ObservableGame game) {
+//        this.game = game;
+//
+//        setChanged();
+//        notifyObservers();
+//    }
 
     //---------------------- MANAGEMENT COMMUNICATION ---------------------
     private void startManagementServerConnection(String managementAddress) {
@@ -244,13 +262,46 @@ public class GlobalController extends Observable {
         }
     }
 
+    private String getGameServerIp() {
+        try {
+            return clientManagement.getGameServerAddress();
+        } catch (NoGameServerException e) {
+            JOptionPane.showMessageDialog(null, "Não existe nenhum servidor de jogo ligado.");
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            shutdownClient(-1);
+        }
+
+        return null;
+    }
+
+    //------------------------ GAME COMMUNICATION -------------------------
+    public void startGame() {
+        if (pairRequest != null && pairRequest.isFormed()) {
+            String gameServerIp = getGameServerIp();
+            if (gameServerIp != null) {
+                Thread gameThread = new Thread(new GameHandler(this, gameServerIp));
+                gameThread.start();
+            }
+        }
+    }
+
     //-------------------------- OTHER METHODS ----------------------------
     public void shutdownClient(int exitStatus) {
         if (login != null) {
             logout();
         }
 
+        if (gameHandler != null) {
+            gameHandler.sendLogoutToGameServer();
+        }
+
         System.exit(exitStatus);
 
+    }
+
+    public void gameEnded() {
+        gameHandler = null;
     }
 }

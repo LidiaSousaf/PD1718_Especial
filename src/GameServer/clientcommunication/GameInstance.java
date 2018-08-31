@@ -150,12 +150,12 @@ public class GameInstance implements Runnable, Observer {
                 //retrieve moves from each player in its respective turn
                 //update ObservableGame accordingly
                 int pIndex = game.getNumCurrentPlayer() - 1; //index of the current player, managed by the game logic
+
                 try {
-                    Object o = players[pIndex].getOis().readObject();
-                    if (o instanceof GameMove) { //expect to receive a GameMove from the player
-                        GameMove move = (GameMove) o;
-                        handleGameMove(move);
-                    }
+                    //expect to receive a GameMove from the player
+                    GameMove move = (GameMove) players[pIndex].getOis().readObject();
+                    handleGameMove(move);
+
                 } catch (ClassNotFoundException e) {
                     System.err.println("Error - received unknown object: " + e);
                 } catch (SocketTimeoutException e) {
