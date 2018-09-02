@@ -143,12 +143,15 @@ public class GameData implements Constants, Serializable {
     }
 
     public boolean isOver() {
-        return hasWon(players.get(0)) || hasWon(players.get(1));
+        return players.get(0).getHasWon() //cover the case when the opponent gave up
+                || players.get(1).getHasWon() //cover the case when the opponent gave up
+                || hasWon(players.get(0))
+                || hasWon(players.get(1));
 
     }
 
     public boolean hasWon(Player player) {
-        return isAlignedH(player) || isAlignedD(player) || isAlignedV(player);
+        return player.getHasWon() || isAlignedH(player) || isAlignedD(player) || isAlignedV(player);
     }
 
     private boolean isAlignedH(Player player) {

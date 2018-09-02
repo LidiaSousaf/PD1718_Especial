@@ -23,7 +23,6 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     public ClientManagementService(DatabaseCommunication databaseCommunication, HeartbeatService heartbeatService)
             throws RemoteException {
         this.databaseCommunication = databaseCommunication;
-//        this.databaseCommunication.deleteAllGames();
         this.databaseCommunication.logoutAllPlayers();
         this.databaseCommunication.deleteAllPairs();
         this.clients = new ArrayList<>();

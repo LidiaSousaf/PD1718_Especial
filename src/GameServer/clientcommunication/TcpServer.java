@@ -6,6 +6,8 @@ package GameServer.clientcommunication;
 
 import CommunicationCommons.GameCommConstants;
 import CommunicationCommons.PlayerLogin;
+import CommunicationCommons.remoteexceptions.NotLoggedException;
+import CommunicationCommons.remoteexceptions.PairTimedOutException;
 import DatabaseCommunication.DatabaseCommunication;
 import DatabaseCommunication.exceptions.PairNotFoundException;
 import DatabaseCommunication.exceptions.PlayerNotFoundException;
@@ -22,6 +24,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class TcpServer implements Runnable {
@@ -29,8 +32,6 @@ public class TcpServer implements Runnable {
     private static final String DATABASE_NAME = "three_in_row";
     private static final String DATABASE_USER_NAME = "GameServer";
     private static final String DATABASE_PASSWORD = "ThreeInRow_1718";
-
-    private final Object LOCK = new Object();
 
     private List<Client> clientList;
     private ServerSocket serverSocket;
@@ -72,29 +73,30 @@ public class TcpServer implements Runnable {
     }
 
     private void addClientToList(Client newClient) {
-        synchronized (LOCK) {
-            clientList.add(newClient);
+        clientList.add(newClient);
 
-            try {
-                //if the pair for the current client is already connected,
-                //start the new game instance
-                int pairIndex = getClientIndex(newClient.getCurrentPairId());
-                Client clients[] = new Client[2];
-                clients[0] = clientList.get(pairIndex);
-                clients[1] = newClient;
-                GameInstance gameInstance = new GameInstance(clients, database, this);
-                Thread gameThread = new Thread(gameInstance);
-                gameThread.start();
+        try {
+            //if the pair for the current client is already connected,
+            //start the new game instance
+            int pairIndex = getClientIndex(newClient.getCurrentPairId());
+            Client clients[] = new Client[2];
+            clients[0] = clientList.get(pairIndex);
+            clients[1] = newClient;
+            GameInstance gameInstance = new GameInstance(clients, database);
+            Thread gameThread = new Thread(gameInstance);
+            gameThread.start();
 
-            } catch (ClientNotFoundException e) {
-                //this means that the current client was the first to connect from it's pair
-                //no need to do anything
-            }
+            removeClientFromList(clients[0].getDbPlayer().getId());
+            removeClientFromList(clients[1].getDbPlayer().getId());
+
+        } catch (ClientNotFoundException e) {
+            //this means that the current client was the first to connect from it's pair
+            //no need to do anything
         }
+
     }
 
     private int getClientIndex(int playerId) throws ClientNotFoundException {
-//        synchronized (LOCK) {
         for (int i = 0; i < clientList.size(); i++) {
             if (clientList.get(i).getDbPlayer().getId() == playerId) {
                 return i;
@@ -102,25 +104,53 @@ public class TcpServer implements Runnable {
         }
 
         throw new ClientNotFoundException();
-//        }
     }
 
-    public void removeClientFromList(int playerId) {
-        synchronized (LOCK) {
-            for (int i = 0; i < clientList.size(); i++) {
-                if (clientList.get(i).getDbPlayer().getId() == playerId) {
-                    clientList.remove(i);
-                    return;
-                }
+    private void removeClientFromList(int playerId) {
+        Iterator<Client> it = clientList.iterator();
+
+        while (it.hasNext()) {
+            Client client = it.next();
+            if (client.getDbPlayer().getId() == playerId) {
+                it.remove();
             }
         }
     }
 
+    private void incClientsWaitingPeriods() {
+        for (Client client : clientList) {
+            client.incWaitingPeriods();
+
+            //Each client will only wait MAX_TIME_OUTS * 10 seconds for its pair to connect
+            //The connection will then be refused
+            if (client.getWaitingPeriods() > GameCommConstants.MAX_TIME_OUTS) {
+                try {
+                    client.getOos().writeObject(new PairTimedOutException());
+                    client.getSocket().close();
+                } catch (IOException e) {
+//                    e.printStackTrace();
+                }
+                removeClientFromList(client.getDbPlayer().getId());
+            }
+        }
+    }
+
+
     private void sendConnectionRefused(Socket cliSocket) throws IOException {
         ObjectOutputStream out = new ObjectOutputStream(cliSocket.getOutputStream());
-        out.writeObject(GameCommConstants.CONNECTION_REFUSED);
+        out.writeObject(new NotLoggedException());
         out.flush();
         cliSocket.close();
+    }
+
+    private void closeClientSockets() {
+        for (Client client : clientList) {
+            try {
+                client.getSocket().close();
+            } catch (Exception e) {
+//                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -180,13 +210,15 @@ public class TcpServer implements Runnable {
                 }
             } catch (SocketTimeoutException e) {
                 //Make sure the server doesn't get indefinitely stuck in the loop
-//                System.err.println("TCP socket error: " + e);
+                incClientsWaitingPeriods();
             } catch (IOException e) {
                 System.err.println("TCP socket error: " + e);
                 GameServer.stopThreads = true;
                 break;
             }
         }
+
+        closeClientSockets();
 
         if (serverSocket != null) {
             try {

@@ -7,6 +7,7 @@ package GameClient.gameservercommunication;
 import CommunicationCommons.GameCommConstants;
 import CommunicationCommons.GameMove;
 import CommunicationCommons.remoteexceptions.GameNotFoundRemoteException;
+import CommunicationCommons.remoteexceptions.PairTimedOutException;
 import GameClient.GlobalController;
 import GameLogic.three_in_row.logic.GameModel;
 import GameLogic.three_in_row.logic.ObservableGame;
@@ -46,7 +47,6 @@ public class GameHandler implements Runnable {
     private void initializeSocket() {
         try {
             InetAddress gameServerAddr = InetAddress.getByName(gameServerIp);
-            System.out.println(gameServerIp);
             socket = new Socket(gameServerAddr, GameCommConstants.TCP_PORT);
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
@@ -65,8 +65,15 @@ public class GameHandler implements Runnable {
             oos.flush();
 
             //receive confirmation from game server
-            Integer result = (Integer) ois.readObject();
-            if (!result.equals(GameCommConstants.CONNECTION_ACCEPTED)) {
+            Object result = ois.readObject();
+            if (result instanceof Integer) {
+                Integer code = (Integer) result;
+                if (!code.equals(GameCommConstants.CONNECTION_ACCEPTED)) {
+                    JOptionPane.showMessageDialog(null,
+                            "O servidor de jogo rejeitou a ligação.");
+                    stopThread = true;
+                }
+            } else { //assume the object read was an exception
                 JOptionPane.showMessageDialog(null,
                         "O servidor de jogo rejeitou a ligação.");
                 stopThread = true;
@@ -88,15 +95,21 @@ public class GameHandler implements Runnable {
     private void receiveData() {
         try {
             Object data = ois.readObject();
-            if (data instanceof GameModel) {
+            if (data instanceof PairTimedOutException) {
+                JOptionPane.showMessageDialog(null,
+                        "O seu par não se ligou a tempo ao servidor de jogo.");
+                game.setInterrupted(true);
+                stopThread = true;
+            } else if (data instanceof GameModel) {
                 updateGameModel((GameModel) data);
-            } else if(data instanceof GameNotFoundRemoteException){
+            } else if (data instanceof GameNotFoundRemoteException) {
                 JOptionPane.showMessageDialog(null,
                         "O servidor de jogo não conseguiu comunicar com a base de dados.");
                 game.setInterrupted(true);
                 stopThread = true;
-            } else {//assume that the server sent some error code
-                JOptionPane.showMessageDialog(null, "Recebido erro do servidor de jogo.");
+            } else {//assume that the server sent some error
+                JOptionPane.showMessageDialog(null,
+                        "Ocorreu um erro no servidor de jogo. A partida foi interrompida");
                 game.setInterrupted(true);
                 stopThread = true;
             }
@@ -117,9 +130,6 @@ public class GameHandler implements Runnable {
         synchronized (LOCK) {
             game.setGameModel(gameModel);
 
-            System.out.println("New game model received:");
-            System.out.println("Player1: " + gameModel.getPlayer1().getName() + ", Player2: " + gameModel.getPlayer2().getName());
-            System.out.println("Current player: " + gameModel.getCurrentPlayerName());
             if (game.isInterrupted() || game.isOver()) {
                 //game ended
                 stopThread = true;

@@ -12,7 +12,9 @@ public class GameCommConstants {
 
     public static final int SOCKET_TIMEOUT = 10000;
 
-    public static final Integer CONNECTION_REFUSED = -1;
+    public static final int MAX_TIME_OUTS = 6;
+
+//    public static final Integer CONNECTION_REFUSED = -1;
     public static final Integer CONNECTION_ACCEPTED = 1;
 
     public static final Integer MAKE_MOVE = 2;

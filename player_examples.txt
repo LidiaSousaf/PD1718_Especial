@@ -1,3 +1,4 @@
 User: lidia Pass: lidia!
-User: noddy Pass: password
 User: tobias Pass: tobias
+User: pedro Pass: password
+User: alice Pass: _password
