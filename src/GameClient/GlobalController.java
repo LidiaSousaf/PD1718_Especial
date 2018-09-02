@@ -79,6 +79,17 @@ public class GlobalController extends Observable {
 //        notifyObservers();
 //    }
 
+    private void setGameHandler(GameHandler gameHandler){
+        this.gameHandler = gameHandler;
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public boolean isGameRunning() {
+        return gameHandler != null;
+    }
+
     //---------------------- MANAGEMENT COMMUNICATION ---------------------
     private void startManagementServerConnection(String managementAddress) {
         try {
@@ -141,7 +152,6 @@ public class GlobalController extends Observable {
     }
 
     private void logout() {
-        //TODO: end game and logout from GameServer as well
         try {
             clientManagement.logout(login.getUserName());
         } catch (InvalidCredentialsException e) {
@@ -280,8 +290,8 @@ public class GlobalController extends Observable {
     public void startGame() {
         if (pairRequest != null && pairRequest.isFormed()) {
             String gameServerIp = getGameServerIp();
-            if (gameServerIp != null) {
-                gameHandler = new GameHandler(this, gameServerIp);
+            if (gameServerIp != null && !isGameRunning()) {
+                setGameHandler(new GameHandler(this, gameServerIp));
                 Thread gameThread = new Thread(gameHandler);
                 gameThread.start();
             }
@@ -291,7 +301,6 @@ public class GlobalController extends Observable {
     public void sendMove(GameMove move) {
         if (gameHandler != null && !game.isInterrupted() && !game.isOver()) {
             gameHandler.sendMove(move);
-            System.out.println("Sending move: action=" + move.getAction() + ", row=" + move.getRow() + ", col=" + move.getCol());
         }
     }
 
@@ -310,6 +319,6 @@ public class GlobalController extends Observable {
     }
 
     public void gameEnded() {
-        gameHandler = null;
+        setGameHandler(null);
     }
 }

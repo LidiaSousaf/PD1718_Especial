@@ -5,13 +5,15 @@ import GameLogic.three_in_row.logic.ObservableGame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Painel que contem todos os elementos que aparecem na janela.
  *
  * @author JMSousa (base)
  */
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements Observer {
     ObservableGame game;
     //    StartOptionPanel optionPanel;
     GameGrid theGrid;
@@ -25,6 +27,7 @@ public class GamePanel extends JPanel {
         this.controller = controller;
 
         this.game = this.controller.getGame();
+        this.game.addObserver(this);
 
         setupComponents();
         setupLayout();
@@ -65,4 +68,9 @@ public class GamePanel extends JPanel {
         validate();
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        repaint();
+        revalidate();
+    }
 }

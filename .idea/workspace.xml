@@ -2,17 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3b7d30a8-71b9-4e14-b8ec-4c84a4d4d79f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/CommunicationCommons/remoteexceptions/GameInterruptedException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/CommunicationCommons/remoteexceptions/PairTimedOutException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player_examples.txt" beforeDir="false" afterPath="$PROJECT_DIR$/player_examples.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CommunicationCommons/GameCommConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CommunicationCommons/GameCommConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameClient/gameservercommunication/GameHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameClient/gameservercommunication/GameHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameLogic/three_in_row/logic/GameData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameLogic/three_in_row/logic/GameData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameServer/clientcommunication/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameServer/clientcommunication/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameServer/clientcommunication/GameInstance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameServer/clientcommunication/GameInstance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameServer/clientcommunication/TcpServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameServer/clientcommunication/TcpServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ManagementServer/clientcommunication/ClientManagementService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ManagementServer/clientcommunication/ClientManagementService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameClient/GlobalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameClient/GlobalController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameClient/gui/gameui/GameOptionsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameClient/gui/gameui/GameOptionsPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameClient/gui/gameui/GamePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameClient/gui/gameui/GamePanel.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,26 +33,26 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="java" value="412" />
+          <entry key="java" value="418" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JAVA" value="412" />
+          <entry key="JAVA" value="418" />
           <entry key="PLAIN_TEXT" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="39692" />
-          <entry key="txt" value="709" />
+          <entry key="java" value="39915" />
+          <entry key="txt" value="765" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="39692" />
-          <entry key="PLAIN_TEXT" value="709" />
+          <entry key="JAVA" value="39915" />
+          <entry key="PLAIN_TEXT" value="765" />
         </counts>
       </usages-collector>
     </session>
@@ -67,76 +60,49 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/GameClient/gameservercommunication/GameHandler.java">
+        <entry file="file://$PROJECT_DIR$/src/GameClient/gui/ThreeInRowPanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1467">
-              <caret line="105" column="42" selection-start-line="105" selection-start-column="42" selection-end-line="105" selection-end-column="42" />
+            <state relative-caret-position="17">
+              <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/GameServer/clientcommunication/GameInstance.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="191" column="19" selection-start-line="191" selection-start-column="19" selection-end-line="191" selection-end-column="19" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/ObservableGame.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="81" column="28" selection-start-line="81" selection-start-column="28" selection-end-line="81" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/states/StateAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-134">
-              <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/Player.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="7" column="52" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/states/AwaitReturn.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="35" column="54" selection-start-line="35" selection-start-column="54" selection-end-line="35" selection-end-column="54" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/GameData.java">
+        <entry file="file://$PROJECT_DIR$/src/GameClient/gui/gameui/GamePanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="146" column="88" selection-start-line="146" selection-start-column="88" selection-end-line="146" selection-end-column="88" />
+            <state relative-caret-position="1139">
+              <caret line="73" column="21" selection-start-line="73" selection-start-column="21" selection-end-line="73" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/GameClient/gui/gameui/GameOptionsPanel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1005">
+              <caret line="88" column="38" selection-start-line="88" selection-start-column="38" selection-end-line="88" selection-end-column="38" />
               <folding>
-                <element signature="e#3473#3474#0" expanded="true" />
-                <element signature="e#3558#3559#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/GameClient/GlobalController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="409">
+              <caret line="322" column="28" selection-start-line="322" selection-start-column="28" selection-end-line="322" selection-end-column="28" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#2225#2226#0" expanded="true" />
+                <element signature="e#2267#2268#0" expanded="true" />
+                <element signature="e#11821#11822#0" expanded="true" />
+                <element signature="e#11857#11858#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -156,6 +122,7 @@
     <findStrings>
       <find>GameServerInfo</find>
       <find>System</find>
+      <find>system</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -190,14 +157,11 @@
         <option value="$PROJECT_DIR$/src/GameClient/gui/gameui/StartOptionPanel.java" />
         <option value="$PROJECT_DIR$/src/GameClient/gui/gameui/PlayerNameBox.java" />
         <option value="$PROJECT_DIR$/src/GameLogic/three_in_row/logic/ObservableGame.java" />
-        <option value="$PROJECT_DIR$/src/GameClient/gui/gameui/GameOptionsPanel.java" />
-        <option value="$PROJECT_DIR$/src/GameClient/gui/gameui/GamePanel.java" />
         <option value="$PROJECT_DIR$/src/GameClient/gui/gameui/PlayerData.java" />
         <option value="$PROJECT_DIR$/src/ManagementServer/ManagementServer.java" />
         <option value="$PROJECT_DIR$/src/GameServer/HeartbeatHandler.java" />
         <option value="$PROJECT_DIR$/src/DatabaseCommunication/DatabaseCommunication.java" />
         <option value="$PROJECT_DIR$/src/GameLogic/three_in_row/files/FileUtility.java" />
-        <option value="$PROJECT_DIR$/src/GameClient/GlobalController.java" />
         <option value="$PROJECT_DIR$/src/GameClient/gui/gameui/GameCell.java" />
         <option value="$PROJECT_DIR$/src/GameClient/gui/ClientWindow.java" />
         <option value="$PROJECT_DIR$/src/GameLogic/three_in_row/logic/states/IStates.java" />
@@ -211,10 +175,13 @@
         <option value="$PROJECT_DIR$/src/GameServer/clientcommunication/GameInstance.java" />
         <option value="$PROJECT_DIR$/src/GameServer/clientcommunication/Client.java" />
         <option value="$PROJECT_DIR$/src/GameServer/clientcommunication/TcpServer.java" />
-        <option value="$PROJECT_DIR$/src/GameClient/gameservercommunication/GameHandler.java" />
         <option value="$PROJECT_DIR$/player_examples.txt" />
         <option value="$PROJECT_DIR$/src/ManagementServer/clientcommunication/ClientManagementService.java" />
         <option value="$PROJECT_DIR$/src/GameLogic/three_in_row/logic/GameData.java" />
+        <option value="$PROJECT_DIR$/src/GameClient/gameservercommunication/GameHandler.java" />
+        <option value="$PROJECT_DIR$/src/GameClient/gui/gameui/GamePanel.java" />
+        <option value="$PROJECT_DIR$/src/GameClient/gui/gameui/GameOptionsPanel.java" />
+        <option value="$PROJECT_DIR$/src/GameClient/GlobalController.java" />
       </list>
     </option>
   </component>
@@ -330,31 +297,29 @@
               <item name="PD1718_Especial" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="PD1718_Especial" type="2674bda8:ScopeViewTreeModel$GroupNode" />
               <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="GameLogic" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="GameClient" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
             <path>
               <item name="PD1718_Especial" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="PD1718_Especial" type="2674bda8:ScopeViewTreeModel$GroupNode" />
               <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="GameLogic" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="three_in_row" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="GameClient" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="gameservercommunication" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
             <path>
               <item name="PD1718_Especial" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="PD1718_Especial" type="2674bda8:ScopeViewTreeModel$GroupNode" />
               <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="GameLogic" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="three_in_row" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="logic" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="GameClient" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="gui" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
             <path>
               <item name="PD1718_Especial" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="PD1718_Especial" type="2674bda8:ScopeViewTreeModel$GroupNode" />
               <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="GameLogic" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="three_in_row" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="logic" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="states" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="GameClient" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="gui" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="gameui" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -491,7 +456,7 @@
       <workItem from="1535634223843" duration="12534000" />
       <workItem from="1535701875357" duration="13830000" />
       <workItem from="1535720861249" duration="16131000" />
-      <workItem from="1535880585346" duration="2534000" />
+      <workItem from="1535880585346" duration="4105000" />
     </task>
     <task id="LOCAL-00001" summary="Progress made in updating logged players list in GameClient application.">
       <created>1535309482967</created>
@@ -577,11 +542,18 @@
       <option name="project" value="LOCAL" />
       <updated>1535737252898</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Adjustments on game server. Give up function now works.">
+      <created>1535883415688</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1535883415688</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="142237000" />
+    <option name="totallyTimeSpent" value="143808000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -594,7 +566,32 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20499243" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Designer" order="2" />
+      <window_info id="Favorites" order="3" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3295082" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49924356" weight="0.22131148" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3295082" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3295082" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50075644" side_tool="true" weight="0.3295082" />
+      <window_info anchor="bottom" id="Messages" order="11" weight="0.3295082" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="right" id="Palette&#9;" order="4" />
+      <window_info anchor="right" id="Maven Projects" order="5" weight="0.32980332" />
+    </layout>
+    <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20499243" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
@@ -617,7 +614,7 @@
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info anchor="right" id="Maven Projects" order="5" weight="0.32980332" />
-    </layout>
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -638,7 +635,8 @@
     <MESSAGE value="Continued working on game server (hopefully concluded)" />
     <MESSAGE value="Started working on client side game communication" />
     <MESSAGE value="Progress on game communication. Still need to fix a lot of stuff" />
-    <option name="LAST_COMMIT_MESSAGE" value="Progress on game communication. Still need to fix a lot of stuff" />
+    <MESSAGE value="Adjustments on game server. Give up function now works." />
+    <option name="LAST_COMMIT_MESSAGE" value="Adjustments on game server. Give up function now works." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/GameServer/game/logic/Player.java" />
@@ -710,13 +708,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/gameui/PlayerData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1479">
-          <caret line="98" column="36" lean-forward="true" selection-start-line="98" selection-start-column="36" selection-end-line="98" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/GameServer/HeartbeatHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="361">
@@ -759,6 +750,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
           <caret line="114" column="53" selection-start-line="114" selection-start-column="53" selection-end-line="114" selection-end-column="53" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -769,34 +763,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/gameui/GamePanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="782">
-          <caret line="50" column="50" selection-start-line="50" selection-start-column="50" selection-end-line="50" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/files/FileUtility.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="229">
           <caret line="19" column="55" selection-start-line="19" selection-start-column="55" selection-end-line="19" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/gameui/GameOptionsPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="87" column="41" selection-start-line="87" selection-start-column="41" selection-end-line="87" selection-end-column="41" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/ClientWindow.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="26" column="48" selection-start-line="26" selection-start-column="48" selection-end-line="26" selection-end-column="48" />
         </state>
       </provider>
     </entry>
@@ -814,20 +784,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="478">
           <caret line="50" column="39" lean-forward="true" selection-start-line="50" selection-start-column="39" selection-end-line="50" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/ThreeInRowPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-222">
-          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/GlobalController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="291" column="46" selection-start-line="291" selection-start-column="46" selection-end-line="291" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -933,23 +889,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameClient/gameservercommunication/GameHandler.java">
+    <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/GameModel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1467">
-          <caret line="105" column="42" selection-start-line="105" selection-start-column="42" selection-end-line="105" selection-end-column="42" />
+        <state relative-caret-position="159">
+          <caret line="84" column="26" lean-forward="true" selection-start-line="84" selection-start-column="26" selection-end-line="84" selection-end-column="26" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#1803#1804#0" expanded="true" />
+            <element signature="e#1843#1844#0" expanded="true" />
+            <element signature="e#2620#2621#0" expanded="true" />
+            <element signature="e#2663#2664#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameServer/clientcommunication/GameInstance.java">
+    <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/GameData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="191" column="19" selection-start-line="191" selection-start-column="19" selection-end-line="191" selection-end-column="19" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="272">
+          <caret line="152" column="34" selection-start-line="152" selection-start-column="34" selection-end-line="152" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/states/AwaitReturn.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="35" column="54" selection-start-line="35" selection-start-column="54" selection-end-line="35" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="7" column="52" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
         </state>
       </provider>
     </entry>
@@ -970,41 +940,78 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/states/AwaitReturn.java">
+    <entry file="file://$PROJECT_DIR$/src/GameServer/clientcommunication/GameInstance.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="35" column="54" selection-start-line="35" selection-start-column="54" selection-end-line="35" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/GameModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="84" column="26" lean-forward="true" selection-start-line="84" selection-start-column="26" selection-end-line="84" selection-end-column="26" />
+        <state relative-caret-position="2412">
+          <caret line="191" column="19" selection-start-line="191" selection-start-column="19" selection-end-line="191" selection-end-column="19" />
           <folding>
-            <element signature="e#1803#1804#0" expanded="true" />
-            <element signature="e#1843#1844#0" expanded="true" />
-            <element signature="e#2620#2621#0" expanded="true" />
-            <element signature="e#2663#2664#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/Player.java">
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gameservercommunication/GameHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="7" column="52" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
+        <state relative-caret-position="3400">
+          <caret line="202" column="49" lean-forward="true" selection-start-line="202" selection-start-column="49" selection-end-line="202" selection-end-column="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GameLogic/three_in_row/logic/GameData.java">
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/ClientWindow.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="146" column="88" selection-start-line="146" selection-start-column="88" selection-end-line="146" selection-end-column="88" />
+        <state relative-caret-position="-424">
+          <caret line="26" column="48" selection-start-line="26" selection-start-column="48" selection-end-line="26" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/ThreeInRowPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
           <folding>
-            <element signature="e#3473#3474#0" expanded="true" />
-            <element signature="e#3558#3559#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/gameui/PlayerData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-145">
+          <caret line="98" column="36" lean-forward="true" selection-start-line="98" selection-start-column="36" selection-end-line="98" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/GlobalController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="322" column="28" selection-start-line="322" selection-start-column="28" selection-end-line="322" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2225#2226#0" expanded="true" />
+            <element signature="e#2267#2268#0" expanded="true" />
+            <element signature="e#11821#11822#0" expanded="true" />
+            <element signature="e#11857#11858#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/gameui/GameOptionsPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1005">
+          <caret line="88" column="38" selection-start-line="88" selection-start-column="38" selection-end-line="88" selection-end-column="38" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GameClient/gui/gameui/GamePanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1139">
+          <caret line="73" column="21" selection-start-line="73" selection-start-column="21" selection-end-line="73" selection-end-column="21" />
         </state>
       </provider>
     </entry>

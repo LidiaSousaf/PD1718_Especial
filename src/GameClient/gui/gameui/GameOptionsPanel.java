@@ -8,7 +8,6 @@ import CommunicationCommons.GameCommConstants;
 import CommunicationCommons.GameMove;
 import GameClient.GlobalController;
 import GameLogic.three_in_row.logic.ObservableGame;
-import GameLogic.three_in_row.logic.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -80,6 +79,7 @@ public class GameOptionsPanel extends JPanel implements Observer {
                 && controller.getPairRequest().isFormed());
 
         startButton.setVisible(game.isInterrupted() || game.isOver());
+        startButton.setEnabled(!controller.isGameRunning());
 
         stopButton.setVisible(!game.isInterrupted() && !game.isOver());
 
