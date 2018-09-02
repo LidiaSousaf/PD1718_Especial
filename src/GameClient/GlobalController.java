@@ -318,6 +318,24 @@ public class GlobalController extends Observable {
         return gameList;
     }
 
+    public void sendMessage(String target, String message) {
+        if (login.getUserName().equals(target)) {
+            return;
+        }
+
+        try {
+            clientManagement.sendMessage(login.getUserName(), target, message);
+        } catch (InvalidCredentialsException e) {
+            JOptionPane.showMessageDialog(null, "O jogador " + target + " não existe!");
+        } catch (NotLoggedException e) {
+            JOptionPane.showMessageDialog(null, "O jogador " + target + " não está logado!");
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            shutdownClient(-1);
+        }
+    }
+
     //------------------------ GAME COMMUNICATION -------------------------
     public void startGame() {
         if (pairRequest != null && pairRequest.isFormed()) {

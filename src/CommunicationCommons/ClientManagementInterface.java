@@ -40,4 +40,7 @@ public interface ClientManagementInterface extends Remote {
     List<GameInfo> getUnfinishedGames(String userName) throws InvalidCredentialsException, RemoteException;
 
     List<GameInfo> getFinishedGames(String userName) throws InvalidCredentialsException, RemoteException;
+
+    void sendMessage(String sender, String target, String message)
+            throws InvalidCredentialsException, NotLoggedException, RemoteException;
 }

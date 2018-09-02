@@ -27,6 +27,7 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
     private PairPanel pairPanel;
     private JLabel lbUserName;
     private JLabel lbName;
+    private ChatPanel chatPanel;
 
     public CallbackUpdatesPanel(GlobalController controller) {
         this.controller = controller;
@@ -45,6 +46,8 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
         lbName = new JLabel();
         lbName.setFont(lbName.getFont().deriveFont(13.0f));
 
+        chatPanel = new ChatPanel(controller);
+
         try {
             this.callback = new RemoteGameClient();
         } catch (RemoteException e) {
@@ -56,8 +59,8 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
 
     private void setUpLayout() {
 
-        this.setSize(320, 600);
-        this.setMinimumSize(new Dimension(300, 500));
+        this.setSize(640, 600);
+        this.setMinimumSize(new Dimension(600, 500));
 
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -65,10 +68,11 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
         //UserName label constraints
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.insets = new Insets(10, 10, 10, 10);
-//        constraints.weighty = 0.2;
+        constraints.weightx = 0.8;
         constraints.anchor = GridBagConstraints.PAGE_START;
         constraints.gridx = 0;
         constraints.gridy = 0;
+        constraints.gridwidth = 2;
         add(lbUserName, constraints);
 
         //Name label constraints
@@ -78,6 +82,7 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
         constraints.anchor = GridBagConstraints.PAGE_START;
         constraints.gridx = 0;
         constraints.gridy = 0;
+        constraints.gridwidth = 2;
         add(lbName, constraints);
 
         //PairPanel constraints
@@ -87,6 +92,7 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
         constraints.anchor = GridBagConstraints.PAGE_START;
         constraints.gridx = 0;
         constraints.gridy = 0;
+        constraints.gridwidth = 1;
         add(pairPanel, constraints);
 
         //loggedClientsPanel constraints
@@ -95,9 +101,21 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
         constraints.ipady = 0;
         constraints.weighty = 0.5;
         constraints.anchor = GridBagConstraints.PAGE_START;
-        constraints.gridx = 0;
+        constraints.gridx = 1;
         constraints.gridy = 1;
+        constraints.gridwidth = 1;
         add(loggedClientsPanel, constraints);
+
+        //chatPanel constraints
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(10, 0, 20, 0);
+        constraints.ipady = 0;
+        constraints.weighty = 0.5;
+        constraints.anchor = GridBagConstraints.PAGE_END;
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        constraints.gridwidth = 1;
+        add(chatPanel, constraints);
 
         validate();
     }
@@ -133,6 +151,10 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
 
     public void updateLoggedClientsPanel(List<LoggedPlayerInfo> playerList) {
         loggedClientsPanel.updateLoggedPlayers(playerList);
+    }
+
+    public void updateChatPanel(String sender, String target, String message) {
+        chatPanel.receiveMessage(sender, target, message);
     }
 
     //--------------------------- INNER CLASS FOR -------------------------
@@ -229,9 +251,21 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
                 public void run() {
                     JOptionPane.showMessageDialog(null, "O servidor de gestão encerrou.\n" +
                             "A aplicação vai ser fechada.");
+
+                    controller.shutdownClient(0);
                 }
             });
 
+        }
+
+        @Override
+        public void receiveMessage(String sender, String target, String message) throws RemoteException {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    updateChatPanel(sender, target, message);
+                }
+            });
         }
     }
 }

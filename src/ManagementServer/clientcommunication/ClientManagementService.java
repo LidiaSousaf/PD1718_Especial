@@ -338,6 +338,29 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         }
     }
 
+    //------------------------ MESSAGE OPERATIONS -------------------------
+    @Override
+    public void sendMessage(String sender, String target, String message)
+            throws InvalidCredentialsException, NotLoggedException, RemoteException {
+
+        try {
+            if (target.equals("ALL")) {
+                sendMessageToAll(sender, message);
+            } else {
+                DbPlayer targetPlayer = databaseCommunication.getPlayerByUserName(target);
+                if (!targetPlayer.isLogged()) {
+                    throw new NotLoggedException();
+                }
+
+                sendMessageToPlayer(sender, target, message);
+            }
+
+        } catch (PlayerNotFoundException e) {
+            throw new InvalidCredentialsException();
+        }
+
+    }
+
     //------------------------- GET GAME SERVER ---------------------------
     @Override
     public String getGameServerAddress() throws NoGameServerException, RemoteException {
@@ -557,6 +580,33 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         }
 
         return gameInfoList;
+    }
+
+    private void sendMessageToAll(String sender, String message) {
+        for (LoggedClientReference clientReference : clients) {
+            try {
+                clientReference.getClientCallback().receiveMessage(sender, "ALL", message);
+            } catch (RemoteException e) {
+                System.out.println("Error sending message to player " + clientReference.getUserName());
+            }
+        }
+    }
+
+    private void sendMessageToPlayer(String sender, String target, String message) {
+        try {
+            LoggedClientReference clientRef = getClientReference(sender);
+            if (clientRef != null) {
+                clientRef.getClientCallback().receiveMessage(sender, target, message);
+            }
+
+            clientRef = getClientReference(target);
+            if (clientRef != null) {
+                clientRef.getClientCallback().receiveMessage(sender, target, message);
+            }
+
+        } catch (RemoteException e) {
+            System.out.println("Error sending message from player " + sender + " to player " + target);
+        }
     }
 
     public void logoutAllPlayers() {
