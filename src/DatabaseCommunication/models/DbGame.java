@@ -54,11 +54,11 @@ public class DbGame {
         this.player2Id = player2Id;
     }
 
-    public int getWinnerId() {
+    public Integer getWinnerId() {
         return winnerId;
     }
 
-    public void setWinnerId(int winnerId) {
+    public void setWinnerId(Integer winnerId) {
         this.winnerId = winnerId;
     }
 

@@ -114,7 +114,13 @@ public class DatabaseCommunication {
     public DbPlayer getPlayerByUserName(String userName) throws PlayerNotFoundException {
         String query = "SELECT * FROM " + Constants.PLAYERS_TABLE + " WHERE " + Constants.USERNAME + " = '" + userName + "';";
 
-        return parsePlayer(query, userName);
+        DbPlayer player = parsePlayer(query, userName);
+
+        if (!player.getUserName().equals(userName)) {
+            throw new PlayerNotFoundException(userName);
+        }
+
+        return player;
     }
 
     public DbPlayer getPlayerById(int id) throws PlayerNotFoundException {
@@ -200,13 +206,9 @@ public class DatabaseCommunication {
         return execute(sql);
     }
 
-    public boolean login(DbPlayer player) throws PlayerNotFoundException, AlreadyLoggedInException {
+    public DbPlayer login(DbPlayer player) throws PlayerNotFoundException, AlreadyLoggedInException {
 
         DbPlayer playerInDb = getPlayerByUserName(player.getUserName());
-
-        if (!playerInDb.getUserName().equals(player.getUserName())) {
-            throw new PlayerNotFoundException();
-        }
 
         if (playerInDb.isLogged()) {
             throw new AlreadyLoggedInException();
@@ -223,7 +225,7 @@ public class DatabaseCommunication {
                 player.setLogged(true);
             }
 
-            return result;
+            return playerInDb;
 
         } else {
             throw new PlayerNotFoundException();
@@ -480,10 +482,31 @@ public class DatabaseCommunication {
         return parseGameList(result);
     }
 
+    public List<DbGame> getUnfinishedGamesForPlayer(DbPlayer player) {
+        String query = "SELECT * FROM " + Constants.GAMES_TABLE + " WHERE "
+                + Constants.PLAYER1_ID + " = '" + player.getId() + "' OR "
+                + Constants.PLAYER2_ID + " = '" + player.getId() + "' AND "
+                + Constants.ENDED + " = '0';";
+        ResultSet result = executeQuery(query);
+
+        return parseGameList(result);
+    }
+
+    public List<DbGame> getFinishedGamesForPlayer(DbPlayer player) {
+        String query = "SELECT * FROM " + Constants.GAMES_TABLE + " WHERE "
+                + Constants.PLAYER1_ID + " = '" + player.getId() + "' OR "
+                + Constants.PLAYER2_ID + " = '" + player.getId() + "' AND "
+                + Constants.ENDED + " = '1';";
+        ResultSet result = executeQuery(query);
+
+        return parseGameList(result);
+    }
+
     public boolean finishGame(DbGame game) {
         String sql = "UPDATE " + Constants.GAMES_TABLE + " SET "
                 + Constants.WINNER_ID + " = '" + game.getWinnerId() + "', "
-                + Constants.ENDED + " = '1';";
+                + Constants.ENDED + " = '1' WHERE "
+                + Constants.ID + " = '" + game.getId() + "';";
 
         return execute(sql);
     }

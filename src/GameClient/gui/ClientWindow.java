@@ -6,9 +6,13 @@ package GameClient.gui;
 
 import CommunicationCommons.PlayerLogin;
 import GameClient.GlobalController;
+import GameClient.gui.dialogs.FinishedGamesDialog;
+import GameClient.gui.dialogs.UnfinishedGamesDialog;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Observable;
@@ -16,18 +20,20 @@ import java.util.Observer;
 
 public class ClientWindow extends JFrame implements Observer {
 
-    private GlobalController globalController;
+    private GlobalController controller;
     private StartupPanel startupPanel;
     private ThreeInRowPanel threeInRowPanel;
+    private JMenuBar menuBar;
 
-    public ClientWindow(GlobalController globalController) {
+    public ClientWindow(GlobalController controller) {
         super("Three In a Row");
 
-        this.globalController = globalController;
-        this.globalController.addObserver(this);
+        this.controller = controller;
+        this.controller.addObserver(this);
 
         createComponents();
         setUpLayout();
+        createMenu();
 
         setVisible(true);
         this.setSize(840, 600);
@@ -38,9 +44,7 @@ public class ClientWindow extends JFrame implements Observer {
             @Override
             public void windowClosing(WindowEvent e) {
 //                super.windowClosing(e);
-                threeInRowPanel.unbindClientCallback();
-                dispose();
-                globalController.shutdownClient(0);
+                exit();
             }
         });
 
@@ -48,8 +52,8 @@ public class ClientWindow extends JFrame implements Observer {
     }
 
     private void createComponents() {
-        startupPanel = new StartupPanel(globalController);
-        threeInRowPanel = new ThreeInRowPanel(globalController);
+        startupPanel = new StartupPanel(controller);
+        threeInRowPanel = new ThreeInRowPanel(controller);
     }
 
     private void setUpLayout() {
@@ -62,20 +66,76 @@ public class ClientWindow extends JFrame implements Observer {
 
     }
 
+    private void createMenu() {
+        menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Menu");
+
+        JMenuItem unfinishedGames = new JMenuItem("Jogos inacabados");
+        unfinishedGames.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openUnfinishedGamesDialog();
+            }
+        });
+
+        JMenuItem finishedGames = new JMenuItem("Jogos concluídos");
+        finishedGames.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openFinishedGamesDialog();
+            }
+        });
+
+        JMenuItem exit = new JMenuItem("Sair");
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exit();
+            }
+        });
+
+        menu.add(unfinishedGames);
+        menu.add(finishedGames);
+        menu.addSeparator();
+        menu.add(exit);
+
+        menuBar.add(menu);
+
+        Container cp = getContentPane();
+        cp.add(menuBar, BorderLayout.PAGE_START);
+        menuBar.setVisible(false);
+    }
+
+    private void openUnfinishedGamesDialog() {
+        JDialog dialog = new UnfinishedGamesDialog(this, controller);
+        dialog.setVisible(true);
+    }
+
+    private void openFinishedGamesDialog() {
+        JDialog dialog = new FinishedGamesDialog(this, controller);
+        dialog.setVisible(true);
+    }
+
+    private void exit() {
+        ClientWindow.this.threeInRowPanel.unbindClientCallback();
+        ClientWindow.this.dispose();
+        ClientWindow.this.controller.shutdownClient(0);
+    }
 
     @Override
     public void update(Observable o, Object arg) {
         if (arg instanceof PlayerLogin) {
-            if (globalController.getLogin() != null) {
+            if (controller.getLogin() != null) {
                 remove(startupPanel);
                 add(threeInRowPanel, BorderLayout.CENTER);
                 threeInRowPanel.registerClientCallback();
+                menuBar.setVisible(true);
             } else {
+                threeInRowPanel.unbindClientCallback();
                 remove(threeInRowPanel);
                 add(startupPanel, BorderLayout.CENTER);
+                menuBar.setVisible(false);
             }
-
-
         }
 
         repaint();

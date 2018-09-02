@@ -36,4 +36,8 @@ public interface ClientManagementInterface extends Remote {
             PairNotFoundRemoteException, RemoteException;
 
     String getGameServerAddress() throws NoGameServerException, RemoteException;
+
+    List<GameInfo> getUnfinishedGames(String userName) throws InvalidCredentialsException, RemoteException;
+
+    List<GameInfo> getFinishedGames(String userName) throws InvalidCredentialsException, RemoteException;
 }

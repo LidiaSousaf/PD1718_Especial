@@ -79,7 +79,7 @@ public class GlobalController extends Observable {
 //        notifyObservers();
 //    }
 
-    private void setGameHandler(GameHandler gameHandler){
+    private void setGameHandler(GameHandler gameHandler) {
         this.gameHandler = gameHandler;
 
         setChanged();
@@ -284,6 +284,38 @@ public class GlobalController extends Observable {
         }
 
         return null;
+    }
+
+    public List<GameInfo> getUnfinishedGames() {
+        List<GameInfo> gameList = null;
+        try {
+            gameList = clientManagement.getUnfinishedGames(login.getUserName());
+        } catch (InvalidCredentialsException e) {
+            JOptionPane.showMessageDialog(null, "O jogador "
+                    + login.getUserName() + " não existe na base de dados!");
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            shutdownClient(-1);
+        }
+
+        return gameList;
+    }
+
+    public List<GameInfo> getFinishedGames() {
+        List<GameInfo> gameList = null;
+        try {
+            gameList = clientManagement.getFinishedGames(login.getUserName());
+        } catch (InvalidCredentialsException e) {
+            JOptionPane.showMessageDialog(null, "O jogador "
+                    + login.getUserName() + " não existe na base de dados!");
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            shutdownClient(-1);
+        }
+
+        return gameList;
     }
 
     //------------------------ GAME COMMUNICATION -------------------------

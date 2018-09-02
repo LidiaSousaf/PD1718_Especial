@@ -4,6 +4,7 @@ import CommunicationCommons.*;
 import CommunicationCommons.remoteexceptions.*;
 import DatabaseCommunication.DatabaseCommunication;
 import DatabaseCommunication.exceptions.*;
+import DatabaseCommunication.models.DbGame;
 import DatabaseCommunication.models.DbPair;
 import DatabaseCommunication.models.DbPlayer;
 import ManagementServer.gameservercommunication.HeartbeatService;
@@ -23,6 +24,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     public ClientManagementService(DatabaseCommunication databaseCommunication, HeartbeatService heartbeatService)
             throws RemoteException {
         this.databaseCommunication = databaseCommunication;
+        this.databaseCommunication.deleteAllGames();
         this.databaseCommunication.logoutAllPlayers();
         this.databaseCommunication.deleteAllPairs();
         this.clients = new ArrayList<>();
@@ -59,16 +61,17 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
     public synchronized String login(PlayerLogin login) throws InvalidCredentialsException, AlreadyLoggedRemoteException, RemoteException {
         if (login.isValid()) {
             try {
-                DbPlayer player = databaseCommunication.getPlayerByUserName(login.getUserName());
-                player.setUserName(login.getUserName()); //this is necessary because searches in database are case insensitive
-                player.setPassword(login.getPassword()); //this is necessary because searches in database are case insensitive
+                DbPlayer player = new DbPlayer(login.getUserName(), null, login.getPassword());
+//                DbPlayer player = databaseCommunication.getPlayerByUserName(login.getUserName());
                 player.setIpAddress(login.getIpAddress());
-                if (databaseCommunication.login(player)) {
+
+                DbPlayer playerInDb = databaseCommunication.login(player);
+                if (playerInDb != null) {
 
                     System.out.println("> Player " + login.getUserName() + " logged in.");
                     updateLoggedClients();
 
-                    return player.getName();
+                    return playerInDb.getName();
                 }
 
             } catch (PlayerNotFoundException e) {
@@ -308,6 +311,33 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         }
     }
 
+    //--------------------- GAME HISTORY OPERATIONS -----------------------
+    @Override
+    public List<GameInfo> getUnfinishedGames(String userName) throws InvalidCredentialsException, RemoteException {
+        try {
+            DbPlayer player = databaseCommunication.getPlayerByUserName(userName);
+            List<DbGame> gameList = databaseCommunication.getUnfinishedGamesForPlayer(player);
+
+            return createGameInfoList(gameList);
+
+        } catch (PlayerNotFoundException e) {
+            throw new InvalidCredentialsException();
+        }
+    }
+
+    @Override
+    public List<GameInfo> getFinishedGames(String userName) throws InvalidCredentialsException, RemoteException {
+        try {
+            DbPlayer player = databaseCommunication.getPlayerByUserName(userName);
+            List<DbGame> gameList = databaseCommunication.getFinishedGamesForPlayer(player);
+
+            return createGameInfoList(gameList);
+
+        } catch (PlayerNotFoundException e) {
+            throw new InvalidCredentialsException();
+        }
+    }
+
     //------------------------- GET GAME SERVER ---------------------------
     @Override
     public String getGameServerAddress() throws NoGameServerException, RemoteException {
@@ -499,6 +529,34 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
         if (clientReference != null) {
             clients.remove(clientReference);
         }
+    }
+
+    private GameInfo createGameInfo(DbGame game) throws PlayerNotFoundException {
+        DbPlayer player1 = databaseCommunication.getPlayerById(game.getPlayer1Id());
+        DbPlayer player2 = databaseCommunication.getPlayerById(game.getPlayer2Id());
+
+        GameInfo gameInfo = new GameInfo(player1.getUserName(), player2.getUserName());
+
+        if (game.getWinnerId() != null) {
+            DbPlayer winner = databaseCommunication.getPlayerById(game.getWinnerId());
+            gameInfo.setWinner(winner.getUserName());
+        }
+
+        return gameInfo;
+    }
+
+    private List<GameInfo> createGameInfoList(List<DbGame> gameList) {
+        List<GameInfo> gameInfoList = new ArrayList<>(gameList.size());
+
+        for (DbGame dbGame : gameList) {
+            try {
+                gameInfoList.add(createGameInfo(dbGame));
+            } catch (PlayerNotFoundException e) {
+                //one of the players no longer exists in the database -> just ignore
+            }
+        }
+
+        return gameInfoList;
     }
 
     public void logoutAllPlayers() {
