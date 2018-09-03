@@ -35,8 +35,8 @@ public class ThreeInRowPanel extends JPanel implements Observer {
     }
 
     private void setUpLayout() {
-        this.setSize(1024, 600);
-        this.setMinimumSize(new Dimension(900, 500));
+        this.setSize(1100, 640);
+        this.setMinimumSize(new Dimension(1000, 600));
 
         setLayout(new BorderLayout());
         add(updatesPanel, BorderLayout.EAST);

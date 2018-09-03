@@ -284,10 +284,10 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
                 DbPair pair = databaseCommunication.getPairForPlayers(player1, player2);
 
                 String playerToNotify;
-                if (!userName.equals(user1)) {
-                    playerToNotify = user1;
-                } else {
+                if (userName.equals(user1)) {
                     playerToNotify = user2;
+                } else {
+                    playerToNotify = user1;
                 }
                 databaseCommunication.deletePair(pair);
 

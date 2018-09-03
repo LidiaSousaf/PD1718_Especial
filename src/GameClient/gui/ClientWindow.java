@@ -36,8 +36,8 @@ public class ClientWindow extends JFrame implements Observer {
         createMenu();
 
         setVisible(true);
-        this.setSize(1024, 600);
-        this.setMinimumSize(new Dimension(900, 500));
+        this.setSize(1100, 640);
+        this.setMinimumSize(new Dimension(1000, 600));
 //        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {

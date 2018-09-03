@@ -13,6 +13,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 
@@ -22,19 +23,23 @@ public class GlobalController extends Observable {
     private ClientManagementInterface clientManagement;
     private PlayerLogin login;
     private String playerName;
-    private PairRequest pairRequest;
+    private PairRequest currentPair;
     private ObservableGame game;
     private GameHandler gameHandler;
+    private List<PairRequest> incomingRequests;
+    private List<PairRequest> outgoingRequests;
 
     //---------------------------- CONSTRUCTOR ----------------------------
     public GlobalController(String managementAddress) {
         startManagementServerConnection(managementAddress);
         login = null;
         playerName = null;
-        pairRequest = null;
+        currentPair = null;
         game = new ObservableGame();
         game.setInterrupted(true);
         gameHandler = null;
+        incomingRequests = new ArrayList<>();
+        outgoingRequests = new ArrayList<>();
     }
 
     //------------------------- GETTERS / SETTERS -------------------------
@@ -58,14 +63,14 @@ public class GlobalController extends Observable {
         notifyObservers(playerName);
     }
 
-    public PairRequest getPairRequest() {
-        return pairRequest;
+    public PairRequest getCurrentPair() {
+        return currentPair;
     }
 
-    public void setPairRequest(PairRequest pairRequest) {
-        this.pairRequest = pairRequest;
+    public void setCurrentPair(PairRequest currentPair) {
+        this.currentPair = currentPair;
         setChanged();
-        notifyObservers(pairRequest);
+        notifyObservers(currentPair);
     }
 
     public ObservableGame getGame() {
@@ -88,6 +93,84 @@ public class GlobalController extends Observable {
 
     public boolean isGameRunning() {
         return gameHandler != null;
+    }
+
+    public List<PairRequest> getIncomingRequests() {
+        return incomingRequests;
+    }
+
+    public void addIncomingRequest(PairRequest request) {
+        incomingRequests.add(request);
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void removeIncomingRequest(PairRequest request) {
+        incomingRequests.remove(request);
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void removeIncomingRequest(String player1) {
+        Iterator<PairRequest> it = incomingRequests.iterator();
+
+        while (it.hasNext()) {
+            PairRequest request = it.next();
+            if (request.getPlayer1().equals(player1)) {
+                it.remove();
+            }
+        }
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void clearIncomingRequests() {
+        incomingRequests.clear();
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public List<PairRequest> getOutgoingRequests() {
+        return outgoingRequests;
+    }
+
+    public void addOutgoingRequest(PairRequest request) {
+        outgoingRequests.add(request);
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void removeOutgoingRequest(PairRequest request) {
+        outgoingRequests.remove(request);
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void removeOutgoingRequest(String player2){
+        Iterator<PairRequest> it = outgoingRequests.iterator();
+
+        while (it.hasNext()){
+            PairRequest request = it.next();
+            if(request.getPlayer2().equals(player2)){
+                it.remove();
+            }
+        }
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void clearOutgoingRequests() {
+        outgoingRequests.clear();
+
+        setChanged();
+        notifyObservers();
     }
 
     //---------------------- MANAGEMENT COMMUNICATION ---------------------
@@ -190,18 +273,28 @@ public class GlobalController extends Observable {
     }
 
     public void requestPair(String invitedPlayer) {
-//        System.out.println("Pedido par ao jogador " + userName);
+//        if (currentPair != null) {
+//            return;
+//        }
 
-        if (pairRequest != null) {
-            return;
+        for (PairRequest request : incomingRequests) {
+            if (request.getPlayer1().equals(invitedPlayer)) {
+                return; //there is already an incoming request from this player
+            }
+        }
+
+        for (PairRequest request : outgoingRequests) {
+            if (request.getPlayer2().equals(invitedPlayer)) {
+                return; //there is already an outgoing request for this player
+            }
         }
 
         try {
             PairRequest newRequest = new PairRequest(login.getUserName(), invitedPlayer);
             clientManagement.requestPair(newRequest);
-            setPairRequest(newRequest);
+//            setCurrentPair(newRequest);
+            addOutgoingRequest(newRequest);
 //                JOptionPane.showMessageDialog(null, "Pedido de par enviado para o jogador " + invitedPlayer);
-
 
         } catch (NotLoggedException e) {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está logado!");
@@ -216,10 +309,27 @@ public class GlobalController extends Observable {
         }
     }
 
-    public void cancelPair() {
+    public void cancelPair(PairRequest request) {
         try {
-            clientManagement.cancelPair(login.getUserName(), pairRequest);
-            setPairRequest(null);
+            clientManagement.cancelPair(login.getUserName(), request);
+            removeOutgoingRequest(request);
+        } catch (InvalidCredentialsException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
+        } catch (NotLoggedException e) {
+            JOptionPane.showMessageDialog(null, "Um dos jogadores não está logado!");
+        } catch (PairNotFoundRemoteException e) {
+            JOptionPane.showMessageDialog(null, "O par indicado já não existe na BD!");
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+            shutdownClient(-1);
+        }
+    }
+
+    public void cancelCurrentPair() {
+        try {
+            clientManagement.cancelPair(login.getUserName(), currentPair);
+            setCurrentPair(null);
         } catch (InvalidCredentialsException e) {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
         } catch (NotLoggedException e) {
@@ -237,8 +347,10 @@ public class GlobalController extends Observable {
         try {
             clientManagement.acceptPair(newPairRequest);
             newPairRequest.setFormed(true);
-            setPairRequest(newPairRequest);
+            setCurrentPair(newPairRequest);
 
+            clearIncomingRequests();
+            clearOutgoingRequests();
         } catch (InvalidCredentialsException e) {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
         } catch (NotLoggedException e) {
@@ -258,7 +370,8 @@ public class GlobalController extends Observable {
     public void rejectPair(PairRequest newPairRequest) {
         try {
             clientManagement.rejectPair(newPairRequest);
-            setPairRequest(null);
+            removeIncomingRequest(newPairRequest);
+//            setCurrentPair(null);
         } catch (InvalidCredentialsException e) {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
         } catch (NotLoggedException e) {
@@ -338,7 +451,7 @@ public class GlobalController extends Observable {
 
     //------------------------ GAME COMMUNICATION -------------------------
     public void startGame() {
-        if (pairRequest != null && pairRequest.isFormed()) {
+        if (currentPair != null && currentPair.isFormed()) {
             String gameServerIp = getGameServerIp();
             if (gameServerIp != null && !isGameRunning()) {
                 setGameHandler(new GameHandler(this, gameServerIp));

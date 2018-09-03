@@ -1,10 +1,10 @@
 /**
- * Created by Lídia on 26/08/2018
+ * Created by Lídia on 03/09/2018
  */
 
 package GameClient.gui;
 
-import CommunicationCommons.LoggedPlayerInfo;
+import CommunicationCommons.PairRequest;
 import GameClient.GlobalController;
 
 import javax.swing.*;
@@ -14,29 +14,34 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class LoggedClientsPanel extends JPanel {
+public class OutgoingRequestsPanel extends JPanel implements Observer {
+    private static final String[] COLUMN_TITLES = {"Jogador", "Cancelar"};
 
-    private static final String[] COLUMN_TITLES = {"Username", "Nome", "Pedir par"};
     private GlobalController controller;
-    private List<LoggedPlayerInfo> playerList;
+    private List<PairRequest> outgoingRequests;
     private JTable table;
     private JLabel panelTitle;
     private JScrollPane scroll;
-    private PlayersTableModel tableModel;
+    private RequestsTableModel tableModel;
 
-    public LoggedClientsPanel(GlobalController controller) {
+    public OutgoingRequestsPanel(GlobalController controller) {
         this.controller = controller;
-        this.playerList = controller.getLoggedPlayers();
+//        this.outgoingRequests = controller.getOutgoingRequests();
+
+        controller.addObserver(this);
+
         createComponents();
         setUpLayout();
     }
 
     private void createComponents() {
-        tableModel = new PlayersTableModel(null, COLUMN_TITLES);
+        tableModel = new RequestsTableModel(null, COLUMN_TITLES);
         table = new JTable(tableModel) {
             public Dimension getPreferredScrollableViewportSize() {
-                return new Dimension(290, 180);
+                return new Dimension(190, 180);
             }
         };
         setColumnDimensions();
@@ -49,19 +54,22 @@ public class LoggedClientsPanel extends JPanel {
 
         table.setPreferredScrollableViewportSize(table.getPreferredSize());
 
-        panelTitle = new JLabel("Jogadores Online");
+        panelTitle = new JLabel("Pedidos Enviados");
         panelTitle.setFont(panelTitle.getFont().deriveFont(14.0f));
+    }
 
+    private void setColumnDimensions() {
+        table.getColumn(COLUMN_TITLES[0]).setPreferredWidth(100);
+        table.getColumn(COLUMN_TITLES[1]).setPreferredWidth(90);
+        table.getColumn(COLUMN_TITLES[1]).setCellRenderer(new ButtonRenderer());
     }
 
     private void setUpLayout() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        setSize(310, 180);
-        setPreferredSize(new Dimension(310, 180));
-        setMaximumSize(new Dimension(310, 180));
-
-//        add(Box.createVerticalStrut(10));
+        setSize(200, 180);
+        setPreferredSize(new Dimension(200, 180));
+        setMaximumSize(new Dimension(200, 180));
 
         panelTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(panelTitle);
@@ -73,32 +81,26 @@ public class LoggedClientsPanel extends JPanel {
         setVisible(true);
     }
 
-    private void setColumnDimensions() {
-        table.getColumn(COLUMN_TITLES[0]).setPreferredWidth(100);
-        table.getColumn(COLUMN_TITLES[1]).setPreferredWidth(100);
-        table.getColumn(COLUMN_TITLES[2]).setPreferredWidth(90);
-        table.getColumn(COLUMN_TITLES[2]).setCellRenderer(new ButtonRenderer());
-    }
-
-
-    public void updateLoggedPlayers(List<LoggedPlayerInfo> playerList) {
-        this.playerList = playerList;
+    private void updateTable() {
         tableModel.setRowCount(0);
-//        System.out.println("updateLoggedPlayers");
-        for (LoggedPlayerInfo playerInfo : playerList) {
-//            System.out.println(playerInfo.getUserName());
-            boolean isSamePlayer = playerInfo.getUserName().equals(controller.getLogin().getUserName());
-            String buttonText = isSamePlayer ? " - " : "Pedir par";
-            JButton button = new JButton(buttonText);
-            button.setEnabled(controller.getCurrentPair() == null && !playerInfo.isPaired() && !isSamePlayer);
-
-            tableModel.addRow(new Object[]{playerInfo.getUserName(), playerInfo.getName(), button});
+        for (PairRequest request : outgoingRequests) {
+            JButton cancelButton = new JButton("Cancelar");
+            tableModel.addRow(new Object[]{request.getPlayer2(), cancelButton});
         }
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+
+        outgoingRequests = controller.getOutgoingRequests();
+
+        updateTable();
+
+    }
+
     //--------------------- INNER TABLE MODEL CLASS -----------------------
-    private class PlayersTableModel extends DefaultTableModel {
-        public PlayersTableModel(Object[][] values, String[] titles) {
+    private class RequestsTableModel extends DefaultTableModel {
+        public RequestsTableModel(Object[][] values, String[] titles) {
             super(values, titles);
         }
 
@@ -139,11 +141,7 @@ public class LoggedClientsPanel extends JPanel {
                 Object value = table.getValueAt(row, column);
                 //check if the object is a button
                 if (value instanceof JButton) {
-                    JButton button = (JButton) value;
-                    //call requestPair() only if the button is enabled
-                    if (button.isEnabled()) {
-                        controller.requestPair(playerList.get(row).getUserName());
-                    }
+                    controller.cancelPair(outgoingRequests.get(row));
                 }
             }
         }

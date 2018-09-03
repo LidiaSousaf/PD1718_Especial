@@ -17,6 +17,7 @@ public class ChatPanel extends JPanel {
     private JTextField targetTextField;
     private JTextField messageTextField;
     private JButton sendButton;
+    private JLabel panelTitle;
 
     public ChatPanel(GlobalController controller) {
         this.controller = controller;
@@ -28,14 +29,17 @@ public class ChatPanel extends JPanel {
     private void createComponents() {
         textArea = new JTextArea();
         textArea.setEditable(false);
-        textArea.setPreferredSize(new Dimension(300, 100));
+        textArea.setPreferredSize(new Dimension(290, 100));
+        textArea.setMaximumSize(new Dimension(290, 100));
         textArea.setLineWrap(true);
 
         targetTextField = new JTextField();
         targetTextField.setPreferredSize(new Dimension(100, 25));
+        targetTextField.setMaximumSize(new Dimension(200, 30));
 
         messageTextField = new JTextField();
         messageTextField.setPreferredSize(new Dimension(100, 25));
+        messageTextField.setMaximumSize(new Dimension(200, 30));
 
         sendButton = new JButton("Enviar");
         sendButton.addActionListener(new ActionListener() {
@@ -45,10 +49,18 @@ public class ChatPanel extends JPanel {
                 messageTextField.setText("");
             }
         });
+
+        panelTitle = new JLabel("Chat");
+        panelTitle.setFont(panelTitle.getFont().deriveFont(14.0f));
     }
 
     private void setUpLayout() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        panelTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(panelTitle);
+
+        add(Box.createRigidArea(new Dimension(10, 10)));
 
         JScrollPane scroll = new JScrollPane(textArea);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -80,6 +92,7 @@ public class ChatPanel extends JPanel {
         box3.add(sendButton);
         box3.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(box3);
+        add(Box.createVerticalStrut(10));
 
         setVisible(true);
         validate();

@@ -75,8 +75,8 @@ public class GameOptionsPanel extends JPanel implements Observer {
     }
 
     private void draw() {
-        setVisible(controller.getPairRequest() != null
-                && controller.getPairRequest().isFormed());
+        setVisible(controller.getCurrentPair() != null
+                && controller.getCurrentPair().isFormed());
 
         startButton.setVisible(game.isInterrupted() || game.isOver());
         startButton.setEnabled(!controller.isGameRunning());

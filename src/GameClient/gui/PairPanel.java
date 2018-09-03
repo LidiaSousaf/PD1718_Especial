@@ -19,7 +19,7 @@ public class PairPanel extends JPanel implements Observer {
 
     private GlobalController controller;
     private JLabel pairName;
-    private JLabel pairState;
+    //    private JLabel pairState;
     private JButton cancelButton;
 
     public PairPanel(GlobalController controller) {
@@ -36,26 +36,26 @@ public class PairPanel extends JPanel implements Observer {
     private void createComponents() {
         pairName = new JLabel();
         pairName.setFont(pairName.getFont().deriveFont(Font.BOLD).deriveFont(13.0f));
-        pairState = new JLabel();
-        pairState.setFont(pairState.getFont().deriveFont(Font.ITALIC));
-        cancelButton = new JButton();
+//        pairState = new JLabel();
+//        pairState.setFont(pairState.getFont().deriveFont(Font.ITALIC));
+        cancelButton = new JButton("Cancelar");
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.cancelPair();
+                controller.cancelCurrentPair();
             }
         });
     }
 
     private void setUpLayout() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        setBorder(new TitledBorder("Par"));
+        setBorder(new TitledBorder("Par Atual"));
 
         Box box = Box.createVerticalBox();
         box.add(Box.createRigidArea(new Dimension(0, 10)));
         box.add(Box.createRigidArea(new Dimension(20, 0)));
         box.add(pairName);
-        box.add(pairState);
+//        box.add(pairState);
         box.add(Box.createRigidArea(new Dimension(0, 10)));
 
         add(box);
@@ -67,20 +67,25 @@ public class PairPanel extends JPanel implements Observer {
     }
 
     private void draw() {
-        PairRequest pair = controller.getPairRequest();
+        PairRequest pair = controller.getCurrentPair();
         if (pair != null) {
-            setVisible(true);
+//            setVisible(true);
             String opponent = pair.getPlayer1().equals(controller.getLogin().getUserName()) ?
                     pair.getPlayer2() : pair.getPlayer1();
             pairName.setText(opponent);
 
-            String state = "(" + (pair.isFormed() ? "Formado" : "Pendente") + ")";
-            pairState.setText(state);
-            cancelButton.setText(pair.isFormed() ? "Desfazer par" : "Cancelar pedido");
+            cancelButton.setEnabled(true);
+
+//            String state = "(" + (pair.isFormed() ? "Formado" : "Pendente") + ")";
+//            pairState.setText(state);
 
         } else {
-            setVisible(false);
+            pairName.setText("(Sem par)");
+            cancelButton.setEnabled(false);
+//            setVisible(false);
         }
+
+        setVisible(true);
 
         validate();
     }

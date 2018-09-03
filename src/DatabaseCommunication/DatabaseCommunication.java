@@ -349,7 +349,7 @@ public class DatabaseCommunication {
 
     public List<DbPair> getPendingPairsForPlayer2(DbPlayer player2) {
         String query = "SELECT * FROM " + Constants.PAIRS_TABLE + " WHERE " +
-                Constants.PLAYER1_ID + " = '" + player2.getId() + "' AND " +
+                Constants.PLAYER2_ID + " = '" + player2.getId() + "' AND " +
                 Constants.FORMED + " = '0';";
 
         ResultSet result = executeQuery(query);
