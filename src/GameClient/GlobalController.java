@@ -312,7 +312,6 @@ public class GlobalController extends Observable {
     public void cancelPair(PairRequest request) {
         try {
             clientManagement.cancelPair(login.getUserName(), request);
-            removeOutgoingRequest(request);
         } catch (InvalidCredentialsException e) {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
         } catch (NotLoggedException e) {
@@ -324,12 +323,13 @@ public class GlobalController extends Observable {
             e.printStackTrace();
             shutdownClient(-1);
         }
+
+        removeOutgoingRequest(request);
     }
 
     public void cancelCurrentPair() {
         try {
             clientManagement.cancelPair(login.getUserName(), currentPair);
-            setCurrentPair(null);
         } catch (InvalidCredentialsException e) {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
         } catch (NotLoggedException e) {
@@ -341,6 +341,8 @@ public class GlobalController extends Observable {
             e.printStackTrace();
             shutdownClient(-1);
         }
+
+        setCurrentPair(null);
     }
 
     public void acceptPair(PairRequest newPairRequest) {
@@ -370,7 +372,6 @@ public class GlobalController extends Observable {
     public void rejectPair(PairRequest newPairRequest) {
         try {
             clientManagement.rejectPair(newPairRequest);
-            removeIncomingRequest(newPairRequest);
 //            setCurrentPair(null);
         } catch (InvalidCredentialsException e) {
             JOptionPane.showMessageDialog(null, "Um dos jogadores não está registado!");
@@ -383,6 +384,9 @@ public class GlobalController extends Observable {
             e.printStackTrace();
             shutdownClient(-1);
         }
+
+
+        removeIncomingRequest(newPairRequest);
     }
 
     private String getGameServerIp() {

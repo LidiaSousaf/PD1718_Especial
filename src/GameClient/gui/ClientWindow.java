@@ -57,7 +57,6 @@ public class ClientWindow extends JFrame implements Observer {
     }
 
     private void setUpLayout() {
-        //TODO: complete stuff...
         Container container = getContentPane();
 
         container.setLayout(new BorderLayout());

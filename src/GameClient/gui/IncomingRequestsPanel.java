@@ -84,30 +84,6 @@ public class IncomingRequestsPanel extends JPanel implements Observer {
         setVisible(true);
     }
 
-    public void addIncomingRequest(PairRequest request) {
-        controller.addIncomingRequest(request);
-
-        JButton acceptButton = new JButton("Aceitar");
-        JButton rejectButton = new JButton("Rejeitar");
-
-        tableModel.addRow(new Object[]{request.getPlayer1(), acceptButton, rejectButton});
-    }
-
-    public void removeIncomingRequest(String player1) {
-        controller.removeIncomingRequest(player1);
-
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            String player = (String) tableModel.getValueAt(i, 0);
-            if (player.equals(player1)) {
-                tableModel.removeRow(i);
-            }
-        }
-    }
-
-    public void clearIncomingRequests() {
-        tableModel.setRowCount(0);
-    }
-
     private void updateTable() {
         tableModel.setRowCount(0);
         for (PairRequest request : incomingRequests) {

@@ -73,61 +73,6 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
         setUpIdentification();
         setUpCenter();
 
-//        setLayout(new GridBagLayout());
-//        GridBagConstraints constraints = new GridBagConstraints();
-//
-//        //UserName label constraints
-//        constraints.fill = GridBagConstraints.HORIZONTAL;
-//        constraints.insets = new Insets(10, 10, 10, 10);
-//        constraints.weightx = 0.8;
-//        constraints.anchor = GridBagConstraints.PAGE_START;
-//        constraints.gridx = 0;
-//        constraints.gridy = 0;
-//        constraints.gridwidth = 2;
-//        add(lbUserName, constraints);
-//
-//        //Name label constraints
-//        constraints.fill = GridBagConstraints.HORIZONTAL;
-//        constraints.insets = new Insets(40, 20, 20, 10);
-////        constraints.weighty = 0.2;
-//        constraints.anchor = GridBagConstraints.PAGE_START;
-//        constraints.gridx = 0;
-//        constraints.gridy = 0;
-//        constraints.gridwidth = 2;
-//        add(lbName, constraints);
-//
-//        //PairPanel constraints
-//        constraints.fill = GridBagConstraints.HORIZONTAL;
-//        constraints.insets = new Insets(80, 10, 20, 10);
-////        constraints.weighty = 0.2;
-//        constraints.anchor = GridBagConstraints.PAGE_START;
-//        constraints.gridx = 0;
-//        constraints.gridy = 0;
-//        constraints.gridwidth = 1;
-//        add(pairPanel, constraints);
-//
-//        //loggedClientsPanel constraints
-//        constraints.fill = GridBagConstraints.HORIZONTAL;
-//        constraints.insets = new Insets(10, 0, 20, 0);
-//        constraints.ipady = 0;
-//        constraints.weighty = 0.5;
-//        constraints.anchor = GridBagConstraints.PAGE_START;
-//        constraints.gridx = 1;
-//        constraints.gridy = 1;
-//        constraints.gridwidth = 1;
-//        add(loggedClientsPanel, constraints);
-//
-//        //chatPanel constraints
-//        constraints.fill = GridBagConstraints.HORIZONTAL;
-//        constraints.insets = new Insets(10, 0, 20, 0);
-//        constraints.ipady = 0;
-//        constraints.weighty = 0.5;
-//        constraints.anchor = GridBagConstraints.PAGE_END;
-//        constraints.gridx = 1;
-//        constraints.gridy = 2;
-//        constraints.gridwidth = 1;
-//        add(chatPanel, constraints);
-
         validate();
     }
 
@@ -218,18 +163,6 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
         chatPanel.receiveMessage(sender, target, message);
     }
 
-//    public void addIncomingPairRequest(PairRequest request) {
-//        incomingRequestsPanel.addIncomingRequest(request);
-//    }
-//
-//    public void removeIncomingPairRequest(String player1) {
-//        incomingRequestsPanel.removeIncomingRequest(player1);
-//    }
-//
-//    public void clearIncomingRequests() {
-//        incomingRequestsPanel.clearIncomingRequests();
-//    }
-
     //--------------------------- INNER CLASS FOR -------------------------
     //-------------------- REMOTE CALLBACK IMPLEMENTATION -----------------
     class RemoteGameClient extends UnicastRemoteObject implements RemoteClientInterface {
@@ -267,8 +200,6 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
 //                    } else {
 //                        controller.rejectPair(pairRequest);
 //                    }
-
-//                    addIncomingPairRequest(pairRequest);
                     controller.addIncomingRequest(pairRequest);
                 }
             });
