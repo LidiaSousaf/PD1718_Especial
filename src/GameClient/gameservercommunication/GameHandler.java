@@ -23,7 +23,7 @@ import java.net.SocketTimeoutException;
 public class GameHandler implements Runnable {
 
     //----------------------------- CONSTANTS -----------------------------
-    private static final Object LOCK = new Object();
+    private final Object LOCK = new Object();
 
     //----------------------------- VARIABLES -----------------------------
     private GlobalController controller;
@@ -95,18 +95,22 @@ public class GameHandler implements Runnable {
     private void receiveData() {
         try {
             Object data = ois.readObject();
-            if (data instanceof PairTimedOutException) {
+
+            if (data instanceof GameModel) {
+                updateGameModel((GameModel) data);
+
+            } else if (data instanceof PairTimedOutException) {
                 JOptionPane.showMessageDialog(null,
                         "O seu par não se ligou a tempo ao servidor de jogo.");
                 game.setInterrupted(true);
                 stopThread = true;
-            } else if (data instanceof GameModel) {
-                updateGameModel((GameModel) data);
+
             } else if (data instanceof GameNotFoundRemoteException) {
                 JOptionPane.showMessageDialog(null,
                         "O servidor de jogo não conseguiu comunicar com a base de dados.");
                 game.setInterrupted(true);
                 stopThread = true;
+
             } else {//assume that the server sent some error
                 JOptionPane.showMessageDialog(null,
                         "Ocorreu um erro no servidor de jogo. A partida foi interrompida");

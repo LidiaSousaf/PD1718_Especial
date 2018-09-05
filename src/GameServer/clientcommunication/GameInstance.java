@@ -6,17 +6,16 @@ package GameServer.clientcommunication;
 
 import CommunicationCommons.GameCommConstants;
 import CommunicationCommons.GameMove;
-import CommunicationCommons.remoteexceptions.GameInterruptedException;
 import CommunicationCommons.remoteexceptions.GameNotFoundRemoteException;
 import DatabaseCommunication.DatabaseCommunication;
 import DatabaseCommunication.exceptions.GameNotFoundException;
 import DatabaseCommunication.models.DbGame;
-import GameLogic.three_in_row.logic.states.AwaitPlacement;
-import GameServer.GameServer;
 import GameLogic.three_in_row.files.FileUtility;
 import GameLogic.three_in_row.logic.GameModel;
 import GameLogic.three_in_row.logic.ObservableGame;
 import GameLogic.three_in_row.logic.states.AwaitBeginning;
+import GameLogic.three_in_row.logic.states.AwaitPlacement;
+import GameServer.GameServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,24 +25,18 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class GameInstance implements Runnable, Observer {
-
-    //----------------------------- CONSTANTS -----------------------------
-    private final Object LOCK = new Object();
-
     //----------------------------- VARIABLES -----------------------------
     private Client[] players;
     private DatabaseCommunication database;
-//    private TcpServer server;
-    private ObservableGame game;
+    private final ObservableGame game;
     private DbGame dbGame;
     private File gameProgressFile;
     private boolean stopThread;
 
     //---------------------------- CONSTRUCTOR ----------------------------
-    public GameInstance(Client[] players, DatabaseCommunication database/*, TcpServer server*/) {
+    public GameInstance(Client[] players, DatabaseCommunication database) {
         this.players = players;
         this.database = database;
-//        this.server = server;
         this.game = new ObservableGame();
         this.stopThread = false;
     }
@@ -142,12 +135,12 @@ public class GameInstance implements Runnable, Observer {
             startGame();
         } catch (SocketException e) {
             System.err.println("Error setting players sockets timeout: " + e);
-            sendError(new GameInterruptedException());
+            sendError(e);
             stopThread = true;
         }
 
         while (!stopThread && !GameServer.stopThreads) {
-            synchronized (LOCK) {
+            synchronized (game) {
                 //retrieve moves from each player in its respective turn
                 //update ObservableGame accordingly
                 int pIndex = game.getNumCurrentPlayer() - 1; //index of the current player, managed by the game logic
@@ -163,11 +156,11 @@ public class GameInstance implements Runnable, Observer {
                     //Make sure the thread doesn't get indefinitely stuck in the loop
                 } catch (SocketException e) {
                     System.err.println("TCP socket error in game instance: " + e);
-                    sendError(new GameInterruptedException());
+                    sendError(e);
                     stopThread = true;
                 } catch (IOException e) {
                     System.err.println("IOException in game instance: " + e);
-                    sendError(new GameInterruptedException());
+                    sendError(e);
                     stopThread = true;
                 }
             }
@@ -193,9 +186,9 @@ public class GameInstance implements Runnable, Observer {
         }
     }
 
-    //    @Override
+    @Override
     public void update(Observable o, Object arg) {
-        synchronized (LOCK) {
+        synchronized (game) {
             saveGameProgress();
             updatePlayers();
 

@@ -4,10 +4,10 @@
 
 package DatabaseCommunication;
 
+import DatabaseCommunication.exceptions.*;
 import DatabaseCommunication.models.DbGame;
 import DatabaseCommunication.models.DbPair;
 import DatabaseCommunication.models.DbPlayer;
-import DatabaseCommunication.exceptions.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -186,24 +186,24 @@ public class DatabaseCommunication {
             ip = "'" + ip + "'";
         }
 
-        String sql = "INSERT INTO " + Constants.PLAYERS_TABLE + " (" + Constants.USERNAME + ", " + Constants.NAME
+        String query = "INSERT INTO " + Constants.PLAYERS_TABLE + " (" + Constants.USERNAME + ", " + Constants.NAME
                 + ", " + Constants.PASSWORD + ", " + Constants.IP_ADDRESS + ") VALUES ('"
                 + player.getUserName() + "', '" + player.getName() + "', '"
                 + player.getPassword() + "', " + ip + ");";
 
-        return execute(sql);
+        return execute(query);
     }
 
     public boolean deletePlayer(String userName) throws PlayerNotFoundException {
         getPlayerByUserName(userName);
-        String sql = "DELETE FROM " + Constants.PLAYERS_TABLE + " WHERE " + Constants.USERNAME + " = '" + userName + "';";
-        return execute(sql);
+        String query = "DELETE FROM " + Constants.PLAYERS_TABLE + " WHERE " + Constants.USERNAME + " = '" + userName + "';";
+        return execute(query);
     }
 
     public boolean deleteAllPlayers() {
-        String sql = "DELETE FROM " + Constants.PLAYERS_TABLE + ";";
+        String query = "DELETE FROM " + Constants.PLAYERS_TABLE + ";";
 
-        return execute(sql);
+        return execute(query);
     }
 
     public DbPlayer login(DbPlayer player) throws PlayerNotFoundException, AlreadyLoggedInException {
@@ -216,11 +216,11 @@ public class DatabaseCommunication {
 
         if (playerInDb.getPassword().equals(player.getPassword())) {
 
-            String sql = "UPDATE " + Constants.PLAYERS_TABLE + " SET " + Constants.LOGGED + " = '1', "
+            String query = "UPDATE " + Constants.PLAYERS_TABLE + " SET " + Constants.LOGGED + " = '1', "
                     + Constants.IP_ADDRESS + " = '" + player.getIpAddress()
                     + "' WHERE " + Constants.USERNAME + " = '" + player.getUserName() + "';";
 
-            boolean result = execute(sql);
+            boolean result = execute(query);
             if (result) {
                 player.setLogged(true);
             }
@@ -239,12 +239,12 @@ public class DatabaseCommunication {
 
         getPlayerByUserName(player.getUserName());
 
-        String sql = "UPDATE " + Constants.PLAYERS_TABLE + " SET " + Constants.LOGGED + " = '0', "
+        String query = "UPDATE " + Constants.PLAYERS_TABLE + " SET " + Constants.LOGGED + " = '0', "
                 + Constants.IP_ADDRESS + " = " + "NULL"
                 + " WHERE " + Constants.USERNAME + " = '"
                 + player.getUserName() + "';";
 
-        boolean result = execute(sql);
+        boolean result = execute(query);
         if (result) {
             player.setLogged(false);
         }
@@ -253,12 +253,12 @@ public class DatabaseCommunication {
     }
 
     public void logoutAllPlayers() {
-        String sql = "UPDATE " + Constants.PLAYERS_TABLE + " SET "
+        String query = "UPDATE " + Constants.PLAYERS_TABLE + " SET "
                 + Constants.LOGGED + " = '0', "
                 + Constants.IP_ADDRESS + " = " + "NULL"
                 + " WHERE " + Constants.LOGGED + " != '0';";
 
-        execute(sql);
+        execute(query);
     }
 
     public List<DbPlayer> getLoggedPlayers() {
@@ -397,54 +397,54 @@ public class DatabaseCommunication {
     }
 
     public boolean deleteAllPairsForPlayer(DbPlayer player) {
-        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
+        String query = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
                 + Constants.PLAYER1_ID + " = '" + player.getId() + "' OR "
                 + Constants.PLAYER2_ID + "='" + player.getId() + "';";
-        return execute(sql);
+        return execute(query);
     }
 
     public boolean deletePendingPairsForPlayer1(DbPlayer player1) {
-        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
+        String query = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
                 + Constants.PLAYER1_ID + " = '" + player1.getId() + "' AND "
                 + Constants.FORMED + "='0';";
-        return execute(sql);
+        return execute(query);
     }
 
     public boolean deletePendingPairsForPlayer2(DbPlayer player2) {
-        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
+        String query = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
                 + Constants.PLAYER2_ID + " = '" + player2.getId() + "' AND "
                 + Constants.FORMED + "='0';";
-        return execute(sql);
+        return execute(query);
     }
 
     public boolean deletePair(DbPair pair) {
-        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
+        String query = "DELETE FROM " + Constants.PAIRS_TABLE + " WHERE "
                 + Constants.PLAYER1_ID + " = '" + pair.getPlayer1Id() + "' AND "
                 + Constants.PLAYER2_ID + "='" + pair.getPlayer2Id() + "';";
-        return execute(sql);
+        return execute(query);
     }
 
     public boolean registerPair(DbPlayer player1, DbPlayer player2) {
-        String sql = "INSERT INTO " + Constants.PAIRS_TABLE + " ("
+        String query = "INSERT INTO " + Constants.PAIRS_TABLE + " ("
                 + Constants.PLAYER1_ID + ", " + Constants.PLAYER2_ID
                 + ", " + Constants.FORMED + ") VALUES ("
                 + player1.getId() + ", " + player2.getId() + ", 0);";
 
-        return execute(sql);
+        return execute(query);
     }
 
     public boolean deleteAllPairs() {
-        String sql = "DELETE FROM " + Constants.PAIRS_TABLE + ";";
+        String query = "DELETE FROM " + Constants.PAIRS_TABLE + ";";
 
-        return execute(sql);
+        return execute(query);
     }
 
     public boolean completePairFormation(DbPair pair) {
-        String sql = "UPDATE " + Constants.PAIRS_TABLE + " SET " + Constants.FORMED
+        String query = "UPDATE " + Constants.PAIRS_TABLE + " SET " + Constants.FORMED
                 + " = '1' WHERE " + Constants.PLAYER1_ID + " = '" + pair.getPlayer1Id()
                 + "' AND " + Constants.PLAYER2_ID + " = '" + pair.getPlayer2Id() + "';";
 
-        boolean result = execute(sql);
+        boolean result = execute(query);
         if (result) {
             pair.setFormed(true);
         }
@@ -453,11 +453,11 @@ public class DatabaseCommunication {
 
     //----------------------- GAMES TABLE ---------------------
     public boolean createGame(DbPlayer player1, DbPlayer player2) {
-        String sql = "INSERT INTO " + Constants.GAMES_TABLE + " (" + Constants.PLAYER1_ID
+        String query = "INSERT INTO " + Constants.GAMES_TABLE + " (" + Constants.PLAYER1_ID
                 + ", " + Constants.PLAYER2_ID + ", " + Constants.ENDED + ") VALUES ("
                 + player1.getId() + ", " + player2.getId() + ", 0);";
 
-        return execute(sql);
+        return execute(query);
     }
 
     public DbGame getUnfinishedGameForPlayers(DbPlayer player1, DbPlayer player2) throws GameNotFoundException {
@@ -483,9 +483,9 @@ public class DatabaseCommunication {
     }
 
     public List<DbGame> getUnfinishedGamesForPlayer(DbPlayer player) {
-        String query = "SELECT * FROM " + Constants.GAMES_TABLE + " WHERE "
+        String query = "SELECT * FROM " + Constants.GAMES_TABLE + " WHERE ("
                 + Constants.PLAYER1_ID + " = '" + player.getId() + "' OR "
-                + Constants.PLAYER2_ID + " = '" + player.getId() + "' AND "
+                + Constants.PLAYER2_ID + " = '" + player.getId() + "') AND "
                 + Constants.ENDED + " = '0';";
         ResultSet result = executeQuery(query);
 
@@ -493,9 +493,9 @@ public class DatabaseCommunication {
     }
 
     public List<DbGame> getFinishedGamesForPlayer(DbPlayer player) {
-        String query = "SELECT * FROM " + Constants.GAMES_TABLE + " WHERE "
+        String query = "SELECT * FROM " + Constants.GAMES_TABLE + " WHERE ("
                 + Constants.PLAYER1_ID + " = '" + player.getId() + "' OR "
-                + Constants.PLAYER2_ID + " = '" + player.getId() + "' AND "
+                + Constants.PLAYER2_ID + " = '" + player.getId() + "') AND "
                 + Constants.ENDED + " = '1';";
         ResultSet result = executeQuery(query);
 
@@ -503,12 +503,12 @@ public class DatabaseCommunication {
     }
 
     public boolean finishGame(DbGame game) {
-        String sql = "UPDATE " + Constants.GAMES_TABLE + " SET "
+        String query = "UPDATE " + Constants.GAMES_TABLE + " SET "
                 + Constants.WINNER_ID + " = '" + game.getWinnerId() + "', "
                 + Constants.ENDED + " = '1' WHERE "
                 + Constants.ID + " = '" + game.getId() + "';";
 
-        return execute(sql);
+        return execute(query);
     }
 
     private DbGame parseGame(ResultSet result) throws GameNotFoundException {
@@ -561,20 +561,20 @@ public class DatabaseCommunication {
     }
 
     public boolean deleteAllGames() {
-        String sql = "DELETE FROM " + Constants.GAMES_TABLE + ";";
+        String query = "DELETE FROM " + Constants.GAMES_TABLE + ";";
 
-        return execute(sql);
+        return execute(query);
     }
 
     //---------------------- OTHER METHODS --------------------
-    private ResultSet executeQuery(String sql) {
+    private ResultSet executeQuery(String query) {
         Statement statement = null;
         ResultSet result = null;
         if (connection == null)
             throw new NotConnectedException("Not connected to the database yet.");
         try {
             statement = connection.createStatement();
-            result = statement.executeQuery(sql);
+            result = statement.executeQuery(query);
         } catch (SQLException e) {
             //e.printStackTrace();
             System.err.println("Error executing query:\n" + e);
@@ -584,13 +584,13 @@ public class DatabaseCommunication {
         return result;
     }
 
-    private boolean execute(String sql) {
+    private boolean execute(String query) {
         Statement statement = null;
         if (connection == null)
             throw new NotConnectedException("Not connected to the database yet.");
         try {
             statement = connection.createStatement();
-            statement.execute(sql);
+            statement.execute(query);
 
         } catch (SQLException e) {
             //e.printStackTrace();

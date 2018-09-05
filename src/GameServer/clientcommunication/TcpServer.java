@@ -118,19 +118,23 @@ public class TcpServer implements Runnable {
     }
 
     private void incClientsWaitingPeriods() {
-        for (Client client : clientList) {
+        Iterator<Client> it = clientList.iterator();
+
+        while (it.hasNext()){
+            Client client = it.next();
             client.incWaitingPeriods();
 
             //Each client will only wait MAX_TIME_OUTS * 10 seconds for its pair to connect
             //The connection will then be refused
-            if (client.getWaitingPeriods() > GameCommConstants.MAX_TIME_OUTS) {
+            if (client.getWaitingPeriods() >= GameCommConstants.MAX_TIME_OUTS) {
                 try {
                     client.getOos().writeObject(new PairTimedOutException());
                     client.getSocket().close();
                 } catch (IOException e) {
 //                    e.printStackTrace();
                 }
-                removeClientFromList(client.getDbPlayer().getId());
+
+                it.remove();
             }
         }
     }
