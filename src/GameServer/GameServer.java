@@ -8,6 +8,7 @@ import CommunicationCommons.HeartbeatInterface;
 
 import java.net.InetAddress;
 import java.rmi.Naming;
+import java.util.Scanner;
 
 public class GameServer {
 
@@ -16,12 +17,25 @@ public class GameServer {
     public static boolean stopThreads = false;
 
     public static void main(String args[]) {
-        String managementServerAddr = MANAGEMENT_ADDRESS;
+//        String managementServerAddr = MANAGEMENT_ADDRESS;
+//        if (args.length >= 1) {
+//            managementServerAddr = args[0];
+//        }
+
+
+        String managementServerAddr = null;
+
         if (args.length >= 1) {
             managementServerAddr = args[0];
+        } else {
+            Scanner sc = new Scanner(System.in);
+
+            while (managementServerAddr == null || managementServerAddr.isEmpty()) {
+                System.out.println("Insert the IP address of the Management Server:");
+                managementServerAddr = sc.nextLine();
+            }
         }
 
-        System.out.println("Game Server started.");
         startManagementServerConnection(managementServerAddr);
     }
 
@@ -29,6 +43,8 @@ public class GameServer {
         try {
             String heartbeatServiceURL = "rmi://" + managementAddress + "/HeartbeatService";
             HeartbeatInterface heartbeatService = (HeartbeatInterface) Naming.lookup(heartbeatServiceURL);
+
+            System.out.println("Game Server started.");
 
             String localIp = InetAddress.getLocalHost().getHostAddress();
             HeartbeatHandler heartbeatHandler = new HeartbeatHandler(heartbeatService, localIp);
@@ -40,7 +56,8 @@ public class GameServer {
 //            heartbeatHandler.setStop(true);
             stopThreads = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("An error occurred: " + e);
+//            e.printStackTrace();
             System.exit(-1);
         } finally {
 

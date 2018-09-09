@@ -559,7 +559,7 @@ public class ClientManagementService extends UnicastRemoteObject implements Clie
 
         GameInfo gameInfo = new GameInfo(player1.getUserName(), player2.getUserName());
 
-        if (game.getWinnerId() != null) {
+        if (game.getWinnerId() != null && game.getWinnerId() != 0) {
             DbPlayer winner = databaseCommunication.getPlayerById(game.getWinnerId());
             gameInfo.setWinner(winner.getUserName());
         }

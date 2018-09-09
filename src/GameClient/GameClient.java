@@ -5,17 +5,31 @@ package GameClient; /**
 import GameClient.gui.ClientWindow;
 
 import javax.swing.*;
+import java.util.Scanner;
 
 public class GameClient {
 
     public static void main(String[] args) {
-        if (args.length < 1) {
-            JOptionPane.showMessageDialog(null, "Erro de sintaxe: java GameClient <ip_serv_gestao>");
-            System.out.println("Erro de sintaxe: java GameClient <ip_serv_gestao>");
-            System.exit(0);
-        }
+//        if (args.length < 1) {
+//            JOptionPane.showMessageDialog(null, "Erro de sintaxe: java GameClient <ip_serv_gestao>");
+//            System.out.println("Erro de sintaxe: java GameClient <ip_serv_gestao>");
+//            System.exit(0);
+//        }
+//
+//        String managementAddress = args[0];
 
-        String managementAddress = args[0];
+        String managementAddress = null;
+
+        if (args.length < 1) {
+            Scanner sc = new Scanner(System.in);
+
+            while (managementAddress == null || managementAddress.isEmpty()) {
+                System.out.println("Indique o endereço IP do Servidor de Gestão:");
+                managementAddress = sc.nextLine();
+            }
+        } else {
+            managementAddress = args[0];
+        }
 
         GlobalController globalController = null;
         try {

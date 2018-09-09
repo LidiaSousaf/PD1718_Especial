@@ -219,8 +219,8 @@ public class CallbackUpdatesPanel extends JPanel implements Observer {
 
                         controller.setCurrentPair(null);
 
-                        JOptionPane.showMessageDialog(null,
-                                "O jogador " + cancelingPlayer + " desfez o par.");
+//                        JOptionPane.showMessageDialog(null,
+//                                "O jogador " + cancelingPlayer + " desfez o par.");
                     } else {
                         controller.removeIncomingRequest(cancelingPlayer);
                     }

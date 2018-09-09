@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
 public class ManagementServer {
     private static final String DATABASE_NAME = "three_in_row";
@@ -19,10 +20,23 @@ public class ManagementServer {
     private static final String DATABASE_ADDRESS = "localhost";
 
     public static void main(String[] args) {
+//        String databaseIpAddress = DATABASE_ADDRESS;
+//        if (args.length >= 1) {
+//            databaseIpAddress = args[0];
+//        }
+
         //Get the Ip address for the database
-        String databaseIpAddress = DATABASE_ADDRESS;
+        String databaseIpAddress = null;
+
         if (args.length >= 1) {
             databaseIpAddress = args[0];
+        } else {
+            Scanner sc = new Scanner(System.in);
+
+            while (databaseIpAddress == null || databaseIpAddress.isEmpty()) {
+                System.out.println("Insert the IP address of the Database Server:");
+                databaseIpAddress = sc.nextLine();
+            }
         }
 
         DatabaseCommunication databaseCommunication = new DatabaseCommunication(DATABASE_NAME,
